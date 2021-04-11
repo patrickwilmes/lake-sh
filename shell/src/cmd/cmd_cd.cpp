@@ -1,6 +1,11 @@
 #include "usr.hpp"
 #include "cmd.hpp"
 #include <unistd.h>
+#include <string>
+
+bool is_relative_path(std::string &path) {
+    return false;
+}
 
 void lsh::cmd::handle_cd(lsh::assembler::cmd *cmd) {
     if (cmd->args.empty()) {
