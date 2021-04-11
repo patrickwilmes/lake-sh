@@ -5,6 +5,9 @@ set(SRC
         src/tokenizer.cpp
         src/tokenizer.hpp
 
+        src/usr.cpp
+        src/usr.hpp
+
         src/main.cpp
         )
 

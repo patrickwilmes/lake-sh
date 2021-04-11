@@ -1,6 +1,7 @@
 #include "lsh.hpp"
 #include <iostream>
 #include <string>
+#include "usr.hpp"
 
 static const std::string EXIT_KWD = "exit";
 
@@ -15,5 +16,7 @@ void lsh::run() {
 }
 
 void lsh::displayPrompt() {
-    std::cout << ">> ";
+    char *username = lsh::usr::get_user_name();
+    std::cout << username << ">> ";
+    free(username);
 }
