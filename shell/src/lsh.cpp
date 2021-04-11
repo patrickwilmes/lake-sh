@@ -4,7 +4,7 @@
 
 static const std::string EXIT_KWD = "exit";
 
-void Lsh::run() {
+void lsh::run() {
     displayPrompt();
     for (std::string line; std::getline(std::cin, line);) {
         if (line == EXIT_KWD) {
@@ -14,6 +14,6 @@ void Lsh::run() {
     }
 }
 
-void Lsh::displayPrompt() {
+void lsh::displayPrompt() {
     std::cout << ">> ";
 }

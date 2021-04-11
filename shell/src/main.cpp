@@ -2,6 +2,6 @@
 #include "lsh.hpp"
 
 int main() {
-    Lsh::run();
+    lsh::run();
     return EXIT_SUCCESS;
 }
