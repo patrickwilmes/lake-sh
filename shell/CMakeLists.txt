@@ -11,6 +11,8 @@ set(SRC
         src/cmd_assembler.cpp
         src/cmd_assembler.hpp
 
+        src/cmd_handler.cpp
+        src/cmd_handler.hpp
         )
 
 set(TST_SRC
@@ -20,7 +22,7 @@ set(TST_SRC
         test/cmd_assembler_test.cpp
         )
 
-add_executable(lsh src/main.cpp ${SRC})
+add_executable(lsh src/main.cpp ${SRC} )
 
 
 add_executable(lsh_test ${SRC} ${TST_SRC})

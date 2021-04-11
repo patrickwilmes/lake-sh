@@ -2,6 +2,7 @@
 #include "cmd_assembler.hpp"
 #include "tokenizer.hpp"
 #include "usr.hpp"
+#include "cmd_handler.hpp"
 #include <climits>
 #include <cstring>
 #include <iostream>
@@ -26,7 +27,7 @@ void lsh::run() {
             exit(EXIT_SUCCESS);
         }
         auto cmds = process_input(line);
-        // todo - dispatch cmds
+        lsh::cmd::handle_commands(cmds);
         lsh::assembler::free_commands(cmds);
         display_prompt();
     }
