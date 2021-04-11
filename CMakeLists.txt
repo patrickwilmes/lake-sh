@@ -3,4 +3,4 @@ project(lake_sh)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(lake_sh main.cpp)
+add_subdirectory(shell)
