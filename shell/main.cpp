@@ -1,3 +1,8 @@
+#include <cstdlib>
+#include "lsh.hpp"
+
 int main() {
-    return 0;
+    Lsh shell;
+    shell.run();
+    return EXIT_SUCCESS;
 }

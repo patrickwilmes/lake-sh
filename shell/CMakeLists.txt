@@ -1,4 +1,7 @@
 set(SRC
+        lsh.cpp
+        lsh.hpp
+
         main.cpp
         )
 
