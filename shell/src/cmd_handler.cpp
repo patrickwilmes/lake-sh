@@ -17,7 +17,7 @@ void lsh::cmd::handle_commands(std::vector<lsh::assembler::cmd *> cmds) {
 
 bool is_own_cmd(lsh::assembler::cmd *cmd) {
     std::vector<std::string> own_cmds = {
-            "pwd"
+            "pwd", "cd"
     };
     return std::find(own_cmds.begin(), own_cmds.end(), cmd->name) != own_cmds.end();
 }
