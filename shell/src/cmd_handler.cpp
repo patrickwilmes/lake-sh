@@ -1,7 +1,6 @@
 #include "cmd_handler.hpp"
-#include "usr.hpp"
+#include "cmd/cmd.hpp"
 #include <string>
-#include <iostream>
 
 bool is_own_cmd(lsh::assembler::cmd *cmd);
 void handle_own_cmd(lsh::assembler::cmd *cmd);
@@ -25,9 +24,9 @@ bool is_own_cmd(lsh::assembler::cmd *cmd) {
 
 void handle_own_cmd(lsh::assembler::cmd *cmd) {
     if (cmd->name == "pwd") {
-        char * wd = lsh::usr::current_wd();
-        std::cout << wd << '\n' << std::flush;
-        free(wd);
+        lsh::cmd::handle_pwd(cmd);
+    } else if (cmd->name == "cd") {
+        lsh::cmd::handle_cd(cmd);
     }
 }
 

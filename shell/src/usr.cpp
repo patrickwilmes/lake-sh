@@ -3,6 +3,8 @@
 #include <malloc.h>
 #include <unistd.h>
 #include <climits>
+#include <sys/types.h>
+#include <pwd.h>
 
 char *lsh::usr::get_user_name() {
     char *username = (char *) malloc(sizeof(char) * MAX_USERNAME_LEN);
@@ -19,4 +21,10 @@ char *lsh::usr::current_wd() {
         return wd;
     }
     return nullptr;
+}
+char *lsh::usr::usr_home_dir() {
+    char *home = (char *) malloc(sizeof(char) * PATH_MAX);
+    struct passwd *pw = getpwuid(getuid());
+    strcpy(home, pw->pw_dir);
+    return home;
 }

@@ -9,6 +9,7 @@ namespace lsh::usr {
 
     char * current_wd();
 
+    char * usr_home_dir();
 }
 
 #endif//LAKE_SH_USR_HPP

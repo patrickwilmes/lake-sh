@@ -13,6 +13,10 @@ set(SRC
 
         src/cmd_handler.cpp
         src/cmd_handler.hpp
+
+        src/cmd/cmd.hpp
+        src/cmd/cmd_pwd.cpp
+        src/cmd/cmd_cd.cpp
         )
 
 set(TST_SRC
@@ -23,7 +27,7 @@ set(TST_SRC
         )
 
 add_executable(lsh src/main.cpp ${SRC} )
-
+target_include_directories(lsh PRIVATE src)
 
 add_executable(lsh_test ${SRC} ${TST_SRC})
 target_include_directories(lsh_test PRIVATE src/)
