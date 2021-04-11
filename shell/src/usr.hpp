@@ -3,6 +3,8 @@
 
 namespace lsh::usr {
 
+    constexpr int MAX_USERNAME_LEN = 32;
+
     char * get_user_name();
 
     char * current_wd();

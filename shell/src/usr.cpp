@@ -4,8 +4,6 @@
 #include <unistd.h>
 #include <climits>
 
-constexpr int MAX_USERNAME_LEN = 32;
-
 char *lsh::usr::get_user_name() {
     char *username = (char *) malloc(sizeof(char) * MAX_USERNAME_LEN);
     char *user = getlogin();

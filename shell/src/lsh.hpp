@@ -3,7 +3,7 @@
 
 namespace lsh {
     void run();
-    void displayPrompt();
+    void display_prompt();
 }
 
 #endif//LAKE_SH_LSH_H
