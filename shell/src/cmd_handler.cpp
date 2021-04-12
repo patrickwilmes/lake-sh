@@ -46,7 +46,7 @@ void handle_extern_cmds(std::vector<lsh::assembler::cmd *> &cmd) {
     pid_t p;
     pid_t pid = fork();
     if (pid < 0) {
-        // todo - error
+        std::cerr << "fork failed" << std::endl;
     } else if(pid == 0) {
         execvp(c, args);
         std::cerr << "exec failed" << std::endl;
