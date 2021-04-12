@@ -17,7 +17,7 @@ std::string resolve_path(std::string &origin_path) {
     return origin_path;
 }
 
-void lsh::cmd::handle_cd(std::shared_ptr<lsh::assembler::cmd> cmd) {
+void lsh::cmd::handle_cd(const std::shared_ptr<lsh::assembler::cmd>& cmd) {
     if (cmd->args.empty()) {
         char *usr_home = lsh::usr::usr_home_dir();
         chdir(usr_home);

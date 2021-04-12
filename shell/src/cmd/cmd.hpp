@@ -6,7 +6,7 @@
 
 namespace lsh::cmd {
     void handle_pwd(std::shared_ptr<lsh::assembler::cmd> cmd);
-    void handle_cd(std::shared_ptr<lsh::assembler::cmd> cmd);
+    void handle_cd(const std::shared_ptr<lsh::assembler::cmd>& cmd);
 }
 
 #endif//LAKE_SH_CMD_HPP
