@@ -10,9 +10,10 @@ std::string resolve_path(std::string &origin_path) {
         char *wd = lsh::usr::usr_home_dir();
         char *target_path = (char *) malloc(sizeof(char) * PATH_MAX);
         char *pch = strrchr(wd, '/');
-        strcpy(target_path, strncpy()
+//        strcpy(target_path, strncpy()
         free(wd);
     }
+    return "";
 }
 
 void lsh::cmd::handle_cd(lsh::assembler::cmd *cmd) {
