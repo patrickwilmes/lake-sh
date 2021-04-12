@@ -1,5 +1,6 @@
 #include "cmd.hpp"
 #include "usr.hpp"
+#include <cassert>
 #include <string>
 #include <unistd.h>
 
@@ -12,7 +13,8 @@ std::string resolve_path(std::string &origin_path) {
         free(wd);
         return wds + "/" + origin_path;
     }
-    return "";
+    assert(origin_path[0] == '/');
+    return origin_path;
 }
 
 void lsh::cmd::handle_cd(std::shared_ptr<lsh::assembler::cmd> cmd) {
