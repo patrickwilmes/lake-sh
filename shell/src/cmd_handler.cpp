@@ -1,6 +1,9 @@
 #include "cmd_handler.hpp"
 #include "cmd/cmd.hpp"
+#include <iostream>
 #include <string>
+#include <sys/wait.h>
+#include <unistd.h>
 
 bool is_own_cmd(lsh::assembler::cmd *cmd);
 void handle_own_cmd(lsh::assembler::cmd *cmd);
@@ -36,4 +39,20 @@ void handle_own_cmd(lsh::assembler::cmd *cmd) {
 }
 
 void handle_extern_cmds(std::vector<lsh::assembler::cmd *> &cmd) {
+    int child_status;
+    const char * c = "ls";
+    const char *latr = "-latr";
+    char *args[3] = {const_cast<char *>(c), const_cast<char *>(latr), NULL};
+    pid_t p;
+    pid_t pid = fork();
+    if (pid < 0) {
+        // todo - error
+    } else if(pid == 0) {
+        execvp(c, args);
+        std::cerr << "exec failed" << std::endl;
+    } else {
+        do {
+            p = wait(&child_status);
+        } while (p != pid);
+    }
 }
