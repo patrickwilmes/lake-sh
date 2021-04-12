@@ -7,7 +7,7 @@
 
 bool is_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd);
 void handle_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd);
-void handle_extern_cmds(std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmd);
+void handle_extern_cmds(std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds);
 
 void lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) {
     auto copy_if_is_external_cmd = [](std::shared_ptr<lsh::assembler::cmd> cmd) {
@@ -38,21 +38,30 @@ void handle_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd) {
     }
 }
 
-void handle_extern_cmds(std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmd) {
-    int child_status;
-    const char *c = "ls";
-    const char *latr = "-latr";
-    char *args[3] = {const_cast<char *>(c), const_cast<char *>(latr), NULL};
-    pid_t p;
-    pid_t pid = fork();
-    if (pid < 0) {
-        std::cerr << "fork failed" << std::endl;
-    } else if (pid == 0) {
-        execvp(c, args);
-        std::cerr << "exec failed" << std::endl;
-    } else {
-        do {
-            p = wait(&child_status);
-        } while (p != pid);
+void handle_extern_cmds(std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds) {
+    if (cmds.size() == 1) {
+        auto cmd_to_exec = cmds.front();
+        int child_status;
+        const char *c = cmd_to_exec->name.c_str();
+        char *args[cmd_to_exec->args.size() + 2];// = {const_cast<char *>(c), const_cast<char *>(latr), NULL};
+        args[0] = const_cast<char *>(c);
+        int i = 1;
+        for (auto &arg : cmd_to_exec->args) {
+            args[i] = const_cast<char *>(arg.c_str());
+            i++;
+        }
+        args[i] = NULL;
+        pid_t p;
+        pid_t pid = fork();
+        if (pid < 0) {
+            std::cerr << "fork failed" << std::endl;
+        } else if (pid == 0) {
+            execvp(c, args);
+            std::cerr << "exec failed" << std::endl;
+        } else {
+            do {
+                p = wait(&child_status);
+            } while (p != pid);
+        }
     }
 }
