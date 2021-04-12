@@ -1,11 +1,12 @@
 #include "lsh.hpp"
 #include "cmd_assembler.hpp"
+#include "cmd_handler.hpp"
 #include "tokenizer.hpp"
 #include "usr.hpp"
-#include "cmd_handler.hpp"
 #include <climits>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,7 +19,7 @@ typedef struct {
 
 render_info *render_info_new();
 void render_info_free(render_info *info);
-std::vector<lsh::assembler::cmd *> process_input(std::string &line);
+std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line);
 
 void lsh::run() {
     display_prompt();
@@ -28,7 +29,6 @@ void lsh::run() {
         }
         auto cmds = process_input(line);
         lsh::cmd::handle_commands(cmds);
-        lsh::assembler::free_commands(cmds);
         display_prompt();
     }
 }
@@ -58,7 +58,7 @@ void render_info_free(render_info *info) {
     free(info);
 }
 
-std::vector<lsh::assembler::cmd *> process_input(std::string &line) {
+std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line) {
     auto tokens = lsh::tokenizer::tokenize(line);
     return lsh::assembler::assemble_commands(tokens);
 }
