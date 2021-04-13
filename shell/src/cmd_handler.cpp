@@ -4,17 +4,49 @@
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <utility>
 
-bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd);
-void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd);
+bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
+void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
 void handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds);
 
+class piped_executor final {
+public:
+    explicit piped_executor(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) : m_cmds(std::move(cmds)) {}
+
+    void execute() {
+        int pid;
+        int pipe1[2];
+        int pipe2[2];
+        bool is_pipe1_write = true;
+        uint32_t counter = 0;
+        std::for_each(m_cmds.begin(), m_cmds.end(), [&](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+            if (pipe(pipe1) == -1) {
+                std::cerr << "failed pipe" << std::endl;
+            }
+            ++counter;
+        });
+    }
+
+private:
+    void execute_front_piped(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+    }
+    void execute_mid_piped(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+    }
+    void execute_back_piped(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+    }
+
+private:
+    const std::vector<std::shared_ptr<lsh::assembler::cmd>> m_cmds;
+};
+
+
 void lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) {
-    auto copy_if_is_external_cmd = [](const std::shared_ptr<lsh::assembler::cmd>& cmd) {
+    auto copy_if_is_external_cmd = [](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
         return !is_own_cmd(cmd);
     };
 
-    std::for_each(cmds.begin(), cmds.end(), [](const std::shared_ptr<lsh::assembler::cmd>& cmd) {
+    std::for_each(cmds.begin(), cmds.end(), [](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
         if (is_own_cmd(cmd)) {
             handle_own_cmd(cmd);
         }
@@ -24,14 +56,13 @@ void lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>>
     handle_extern_cmds(extern_cmds);
 }
 
-bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd) {
+bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
     std::vector<std::string> own_cmds = {
-            "pwd", "cd"
-    };
+            "pwd", "cd"};
     return std::find(own_cmds.begin(), own_cmds.end(), cmd->name) != own_cmds.end();
 }
 
-void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd) {
+void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
     if (cmd->name == "pwd") {
         lsh::cmd::handle_pwd(cmd);
     } else if (cmd->name == "cd") {
@@ -64,5 +95,21 @@ void handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> 
                 p = wait(&child_status);
             } while (p != pid);
         }
+    } else {
+        std::string commands;
+        std::for_each(cmds.begin(), cmds.end(), [&](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+            std::string command(cmd->name);
+            command += " ";
+            std::for_each(cmd->args.begin(), cmd->args.end(), [&](const std::string &arg){
+                command = command + " " + arg;
+            });
+            if (!commands.empty())
+                commands = commands + "|" + command;
+            else
+                commands = command;
+        });
+        system(commands.c_str());
+//        piped_executor executor(cmds);
+//        executor.execute();
     }
 }
