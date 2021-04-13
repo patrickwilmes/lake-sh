@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace lsh;
 
@@ -31,12 +32,12 @@ lake_shell::~lake_shell() {
 }
 
 void lake_shell::run() {
+    display_prompt();
     while (m_running) {
         m_shell_context.refresh();
         char *inbuf = (char *) malloc(sizeof(char) * 2048);
         bool collecting_input = true;
         bool direct_command = false;
-        display_prompt();
         int x, y;
         getyx(m_win, y, x);
         while (collecting_input) {
@@ -62,7 +63,6 @@ void lake_shell::run() {
                 case ENTER_KEY:
                     mvwinstr(m_win, y, x, inbuf);
                     collecting_input = false;
-                    clear();
                     break;
                 case KEY_DC: {
                     int cx, cy;
@@ -90,24 +90,39 @@ void lake_shell::run() {
         free(inbuf);
         echo();
         refresh();
-        reset_shell_mode();
+                reset_shell_mode();
         if (command_input == EXIT_KWD) {
             m_running = false;
-        } else if (!direct_command){
+        } else if (!direct_command) {
             auto cmds = process_input(command_input);
-            lsh::cmd::handle_commands(cmds);
+            std::string render_data = lsh::cmd::handle_commands(cmds);
+            std::stringstream ss(render_data);
+            std::string target;
+            int cy, cx;
+            getyx(m_win, cy, cx);
+            cy++;
+            while (std::getline(ss, target, '\n')) {
+                if (!target.empty()) {
+                    mvaddstr(cy, 0, target.c_str());
+                    cy++;
+                }
+            }
             m_history.add(command_input);
         }
-        reset_prog_mode();
+                reset_prog_mode();
         noecho();
+        display_prompt();
         refresh();
     }
 }
 
 void lake_shell::display_prompt() {
+    int y, x;
+    getyx(m_win, y, x);
+    y++;
     echo();
     start_color();
-    addstr(m_shell_context.get_username().c_str());
+    mvaddstr(y, 0, m_shell_context.get_username().c_str());
     addstr(" @ ");
     addstr(m_shell_context.get_working_dir().c_str());
     addstr(" >> ");
