@@ -28,6 +28,7 @@ set(TST_SRC
 
 add_executable(lsh src/main.cpp ${SRC} )
 target_include_directories(lsh PRIVATE src)
+target_link_libraries(lsh ncurses)
 
-add_executable(lsh_test ${SRC} ${TST_SRC})
-target_include_directories(lsh_test PRIVATE src/)
+#add_executable(lsh_test ${SRC} ${TST_SRC})
+#target_include_directories(lsh_test PRIVATE src/)
