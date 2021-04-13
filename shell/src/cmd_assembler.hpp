@@ -3,19 +3,15 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace lsh::assembler {
     typedef struct {
         std::string name;
-        std::string value;
-    } arg;
-
-    typedef struct {
-        std::string name;
-        std::vector<arg*> args;
+        std::vector<std::string> args;
     } cmd;
 
-    std::vector<cmd *> assemble_commands(std::vector<std::string> tokens);
+    std::vector<std::shared_ptr<cmd>> assemble_commands(std::vector<std::string> tokens);
     void free_commands(std::vector<cmd *> cmds);
 }// namespace lsh::assembler
 
