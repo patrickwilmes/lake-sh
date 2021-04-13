@@ -17,9 +17,7 @@ void lsh::shell_context::refresh() {
 
     m_current_dirs = get_dirs_for(wd);
 
-    if (std::find(m_current_dirs.begin(), m_current_dirs.end(), ".git") != m_current_dirs.end()) {
-        m_is_git = true;
-    }
+    m_is_git = std::filesystem::exists(".git");
 
     free(wd_cstr);
     free(home_cstr);
