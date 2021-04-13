@@ -11,8 +11,8 @@ int main() {
     int i = 0;
     char *inbuf = (char *) malloc(sizeof(char) * 2048);
     bool run = true;
-    WINDOW *win;
-    win = initscr();
+    WINDOW *m_win;
+    m_win = initscr();
     clear();
     cbreak();
     noecho();
@@ -21,7 +21,7 @@ int main() {
 	int c = getch();
 	switch(c) {
 	    case KEY_DOWN:
-		mvwinstr(win, 0, 0, inbuf);
+		mvwinstr(m_win, 0, 0, inbuf);
 		run = false;
 		break;
 	    case KEY_UP:
@@ -31,7 +31,7 @@ int main() {
 	    case KEY_DC:
 	    case 127:
 		int x, y;
-		getyx(win, y, x);
+		getyx(m_win, y, x);
 		mvdelch(y, x-1);
 		break;
 	    default:

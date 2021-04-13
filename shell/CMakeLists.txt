@@ -21,6 +21,9 @@ set(SRC
         utils/utils.cpp
         utils/utils.hpp
 
+        history.cpp
+        history.hpp
+
         main.cpp
         )
 

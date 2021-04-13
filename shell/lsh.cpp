@@ -24,8 +24,8 @@ render_info *render_info_new();
 void render_info_free(render_info *info);
 std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line);
 
-lake_shell::lake_shell() {
-    win = initscr();
+lake_shell::lake_shell() : m_history(history(256)) {
+    m_win = initscr();
     clear();
     cbreak();
     noecho();
@@ -37,23 +37,22 @@ lake_shell::~lake_shell() {
 }
 
 void lake_shell::run() {
-    while (running) {
+    while (m_running) {
         char *inbuf = (char *) malloc(sizeof(char) * 2048);
         bool collecting_input = true;
         display_prompt();
         int x, y;
-        getyx(win, y, x);
+        getyx(m_win, y, x);
         while (collecting_input) {
             int c = getch();
             switch (c) {
-                case KEY_DOWN:
-                    mvwinstr(win, y, x, inbuf);
-                    collecting_input = false;
-                    clear();
-                    break;
+                case KEY_UP: {
+                    std::string h_elem = m_history.next();
+                    mvaddstr(y, x, h_elem.c_str());
+                } break;
                 case KEY_ENTER:
                 case 10:
-                    mvwinstr(win, y, x, inbuf);
+                    mvwinstr(m_win, y, x, inbuf);
                     collecting_input = false;
                     clear();
                     break;
@@ -61,7 +60,7 @@ void lake_shell::run() {
                 case KEY_DC:
                 case 127:
                     int cx, cy;
-                    getyx(win, cy, cx);
+                    getyx(m_win, cy, cx);
                     mvdelch(cy, cx - 1);
                     break;
                 default:
@@ -77,10 +76,11 @@ void lake_shell::run() {
         move(y + 1, 0);
         reset_shell_mode();
         if (command_input == EXIT_KWD) {
-            running = false;
+            m_running = false;
         } else {
             auto cmds = process_input(command_input);
             lsh::cmd::handle_commands(cmds);
+            m_history.add(command_input);
         }
         reset_prog_mode();
         noecho();
