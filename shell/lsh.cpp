@@ -13,6 +13,8 @@
 using namespace lsh;
 
 static const std::string EXIT_KWD = "exit";
+constexpr int CTRL_L_KEY = 12;
+constexpr int ENTER_KEY = 10;
 
 typedef struct {
     char *name;
@@ -63,7 +65,7 @@ void lake_shell::run() {
                     move(cy, cx);
                 } break;
                 case KEY_ENTER:
-                case 10:
+                case ENTER_KEY:
                     mvwinstr(m_win, y, x, inbuf);
                     collecting_input = false;
                     clear();
@@ -73,7 +75,7 @@ void lake_shell::run() {
                     getyx(m_win, cy, cx);
                     mvdelch(cy, cx);
                 } break;
-                case 12: {
+                case CTRL_L_KEY: {
                     collecting_input = false;
                     direct_command = true;
                     clear();
