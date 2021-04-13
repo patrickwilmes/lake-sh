@@ -22,6 +22,7 @@ char *lsh::usr::current_wd() {
     }
     return nullptr;
 }
+
 char *lsh::usr::usr_home_dir() {
     char *home = (char *) malloc(sizeof(char) * PATH_MAX);
     struct passwd *pw = getpwuid(getuid());

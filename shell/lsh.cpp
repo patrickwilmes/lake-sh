@@ -106,8 +106,13 @@ render_info *render_info_new() {
     info->working_dir = (char *) malloc(sizeof(char) * PATH_MAX);
     char *username = lsh::usr::get_user_name();
     char *wd = lsh::usr::current_wd();
+    char *usr = lsh::usr::usr_home_dir();
+    std::string wds(wd);
+    std::string usrs(usr);
+    wds.replace(0, usrs.length() + 1, "");
+    wds = "~/" + wds;
     strcpy(info->name, username);
-    strcpy(info->working_dir, wd);
+    strcpy(info->working_dir, wds.c_str());
     free(username);
     free(wd);
     return info;
