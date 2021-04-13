@@ -76,7 +76,7 @@ void lake_shell::run() {
         refresh();
         move(y + 1, 0);
         reset_shell_mode();
-        if (command_input == "exit") {
+        if (command_input == EXIT_KWD) {
             running = false;
         } else {
             auto cmds = process_input(command_input);
