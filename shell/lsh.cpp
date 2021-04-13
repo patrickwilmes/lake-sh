@@ -73,7 +73,6 @@ void lake_shell::run() {
         free(inbuf);
         echo();
         refresh();
-        move(y + 1, 0);
         reset_shell_mode();
         if (command_input == EXIT_KWD) {
             m_running = false;
