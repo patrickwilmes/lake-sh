@@ -87,7 +87,10 @@ void lake_shell::display_prompt() {
     render_info *info = render_info_new();
     echo();
     curs_set(0);
+    start_color();
     addstr(info->name);
+    addstr(" @ ");
+    addstr(info->working_dir);
     addstr(" >> ");
     noecho();
     render_info_free(info);

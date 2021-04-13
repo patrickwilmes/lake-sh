@@ -1,5 +1,5 @@
+#include "../usr.hpp"
 #include "cmd.hpp"
-#include "usr.hpp"
 #include <iostream>
 
 void lsh::cmd::handle_pwd(std::shared_ptr<lsh::assembler::cmd> cmd) {

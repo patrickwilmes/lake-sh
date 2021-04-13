@@ -1,7 +1,7 @@
 #ifndef LAKE_SH_CMD_HPP
 #define LAKE_SH_CMD_HPP
 
-#include "cmd_assembler.hpp"
+#include "../cmd_assembler.hpp"
 #include <memory>
 
 namespace lsh::cmd {

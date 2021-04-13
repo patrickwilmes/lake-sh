@@ -1,34 +1,26 @@
 set(SRC
-        src/lsh.cpp
-        src/lsh.hpp
+        lsh.cpp
+        lsh.hpp
 
-        src/tokenizer.cpp
-        src/tokenizer.hpp
+        tokenizer.cpp
+        tokenizer.hpp
 
-        src/usr.cpp
-        src/usr.hpp
+        usr.cpp
+        usr.hpp
 
-        src/cmd_assembler.cpp
-        src/cmd_assembler.hpp
+        cmd_assembler.cpp
+        cmd_assembler.hpp
 
-        src/cmd_handler.cpp
-        src/cmd_handler.hpp
+        cmd_handler.cpp
+        cmd_handler.hpp
 
-        src/cmd/cmd.hpp
-        src/cmd/cmd_pwd.cpp
-        src/cmd/cmd_cd.cpp
+        cmd/cmd.hpp
+        cmd/cmd_pwd.cpp
+        cmd/cmd_cd.cpp
+
+        main.cpp
         )
 
-set(TST_SRC
-        test/catch2.hpp
-        test/test_main.cpp
-        test/tokenizer_test.cpp
-        test/cmd_assembler_test.cpp
-        )
-
-add_executable(lsh src/main.cpp ${SRC} )
+add_executable(lsh ${SRC} )
 target_include_directories(lsh PRIVATE src)
 target_link_libraries(lsh ncurses)
-
-#add_executable(lsh_test ${SRC} ${TST_SRC})
-#target_include_directories(lsh_test PRIVATE src/)
