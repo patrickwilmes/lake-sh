@@ -16,16 +16,9 @@ static const std::string EXIT_KWD = "exit";
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
 
-typedef struct {
-    char *name;
-    char *working_dir;
-} render_info;
-
-render_info *render_info_new();
-void render_info_free(render_info *info);
 std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line);
 
-lake_shell::lake_shell() : m_history(history(256)) {
+lake_shell::lake_shell() : m_shell_context(shell_context()), m_history(history(256)) {
     m_win = initscr();
     clear();
     cbreak();
@@ -39,6 +32,7 @@ lake_shell::~lake_shell() {
 
 void lake_shell::run() {
     while (m_running) {
+        m_shell_context.refresh();
         char *inbuf = (char *) malloc(sizeof(char) * 2048);
         bool collecting_input = true;
         bool direct_command = false;
@@ -111,39 +105,13 @@ void lake_shell::run() {
 }
 
 void lake_shell::display_prompt() {
-    render_info *info = render_info_new();
     echo();
     start_color();
-    addstr(info->name);
+    addstr(m_shell_context.get_username().c_str());
     addstr(" @ ");
-    addstr(info->working_dir);
+    addstr(m_shell_context.get_working_dir().c_str());
     addstr(" >> ");
     noecho();
-    render_info_free(info);
-}
-
-render_info *render_info_new() {
-    auto *info = (render_info *) malloc(sizeof(render_info));
-    info->name = (char *) malloc(sizeof(char) * lsh::usr::MAX_USERNAME_LEN);
-    info->working_dir = (char *) malloc(sizeof(char) * PATH_MAX);
-    char *username = lsh::usr::get_user_name();
-    char *wd = lsh::usr::current_wd();
-    char *usr = lsh::usr::usr_home_dir();
-    std::string wds(wd);
-    std::string usrs(usr);
-    wds.replace(0, usrs.length() + 1, "");
-    wds = "~/" + wds;
-    strcpy(info->name, username);
-    strcpy(info->working_dir, wds.c_str());
-    free(username);
-    free(wd);
-    return info;
-}
-
-void render_info_free(render_info *info) {
-    free(info->name);
-    free(info->working_dir);
-    free(info);
 }
 
 std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line) {

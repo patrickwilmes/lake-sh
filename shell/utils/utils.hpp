@@ -2,6 +2,8 @@
 #define LC3_VM_UTILS_HPP
 
 #include <string>
+#include <vector>
+#include <filesystem>
 
 inline uint16_t swap16(uint16_t x) { return (x << 8) | (x >> 8); }
 
@@ -20,6 +22,16 @@ static inline void rtrim(std::string &s) {
 static inline void trim(std::string &s) {
   ltrim(s);
   rtrim(s);
+}
+
+static inline std::vector<std::string> get_dirs_for(std::string &path) {
+    std::vector<std::string> entries;
+    for (const auto & entry : std::filesystem::directory_iterator(path)) {
+        if (entry.is_directory()) {
+            entries.push_back(entry.path().string());
+        }
+    }
+    return entries;
 }
 
 #endif // LC3_VM_UTILS_HPP

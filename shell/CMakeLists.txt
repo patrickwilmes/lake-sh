@@ -24,6 +24,9 @@ set(SRC
         history.cpp
         history.hpp
 
+        shell_context.cpp
+        shell_context.hpp
+
         main.cpp
         )
 

@@ -2,6 +2,7 @@
 #define LAKE_SH_LSH_H
 
 #include "history.hpp"
+#include "shell_context.hpp"
 #include <ncurses.h>
 
 namespace lsh {
@@ -16,6 +17,7 @@ namespace lsh {
     private:
         WINDOW *m_win = nullptr;
         bool m_running = true;
+        shell_context m_shell_context;
         history m_history;
     };
 }// namespace lsh
