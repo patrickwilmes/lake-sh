@@ -6,12 +6,9 @@
 #include "utils/utils.hpp"
 #include <climits>
 #include <cstring>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-
-#define ctrl(x) ((x) &0x1f)
 
 using namespace lsh;
 
