@@ -5,16 +5,16 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-bool is_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd);
-void handle_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd);
-void handle_extern_cmds(std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds);
+bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd);
+void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd);
+void handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds);
 
 void lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) {
-    auto copy_if_is_external_cmd = [](std::shared_ptr<lsh::assembler::cmd> cmd) {
+    auto copy_if_is_external_cmd = [](const std::shared_ptr<lsh::assembler::cmd>& cmd) {
         return !is_own_cmd(cmd);
     };
 
-    std::for_each(cmds.begin(), cmds.end(), [](std::shared_ptr<lsh::assembler::cmd> cmd) {
+    std::for_each(cmds.begin(), cmds.end(), [](const std::shared_ptr<lsh::assembler::cmd>& cmd) {
         if (is_own_cmd(cmd)) {
             handle_own_cmd(cmd);
         }
@@ -24,13 +24,14 @@ void lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>>
     handle_extern_cmds(extern_cmds);
 }
 
-bool is_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd) {
+bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd) {
     std::vector<std::string> own_cmds = {
-            "pwd", "cd"};
+            "pwd", "cd"
+    };
     return std::find(own_cmds.begin(), own_cmds.end(), cmd->name) != own_cmds.end();
 }
 
-void handle_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd) {
+void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd>& cmd) {
     if (cmd->name == "pwd") {
         lsh::cmd::handle_pwd(cmd);
     } else if (cmd->name == "cd") {
@@ -38,7 +39,7 @@ void handle_own_cmd(std::shared_ptr<lsh::assembler::cmd> cmd) {
     }
 }
 
-void handle_extern_cmds(std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds) {
+void handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds) {
     if (cmds.size() == 1) {
         auto cmd_to_exec = cmds.front();
         int child_status;
