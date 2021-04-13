@@ -25,6 +25,8 @@ lake_shell::lake_shell() : m_shell_context(shell_context()), m_history(history(2
     cbreak();
     noecho();
     keypad(stdscr, true);
+
+    m_shell_context.refresh();
 }
 
 lake_shell::~lake_shell() {
