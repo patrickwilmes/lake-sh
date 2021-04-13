@@ -50,14 +50,32 @@ void lake_shell::run() {
                     std::string h_elem = m_history.next();
                     mvaddstr(y, x, h_elem.c_str());
                 } break;
+                case KEY_LEFT: {
+                    int cx, cy;
+                    getyx(m_win, cy, cx);
+                    cx--;
+                    move(cy, cx);
+                } break;
+                case KEY_RIGHT: {
+                    int cx, cy;
+                    getyx(m_win, cy, cx);
+                    cx++;
+                    move(cy, cx);
+                } break;
                 case KEY_ENTER:
                 case 10:
                     mvwinstr(m_win, y, x, inbuf);
                     collecting_input = false;
                     clear();
                     break;
-                case KEY_BACKSPACE:
                 case KEY_DC:
+                {
+                    int cx, cy;
+                    getyx(m_win, cy, cx);
+                    mvdelch(cy, cx);
+                    break;
+                } break;
+                case KEY_BACKSPACE:
                 case 127:
                     int cx, cy;
                     getyx(m_win, cy, cx);
@@ -90,7 +108,6 @@ void lake_shell::run() {
 void lake_shell::display_prompt() {
     render_info *info = render_info_new();
     echo();
-    curs_set(0);
     start_color();
     addstr(info->name);
     addstr(" @ ");
