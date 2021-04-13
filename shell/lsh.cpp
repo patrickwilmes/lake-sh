@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#define ctrl(x) ((x) &0x1f)
+
 using namespace lsh;
 
 static const std::string EXIT_KWD = "exit";
@@ -40,6 +42,7 @@ void lake_shell::run() {
     while (m_running) {
         char *inbuf = (char *) malloc(sizeof(char) * 2048);
         bool collecting_input = true;
+        bool direct_command = false;
         display_prompt();
         int x, y;
         getyx(m_win, y, x);
@@ -68,12 +71,15 @@ void lake_shell::run() {
                     collecting_input = false;
                     clear();
                     break;
-                case KEY_DC:
-                {
+                case KEY_DC: {
                     int cx, cy;
                     getyx(m_win, cy, cx);
                     mvdelch(cy, cx);
-                    break;
+                } break;
+                case 12: {
+                    collecting_input = false;
+                    direct_command = true;
+                    clear();
                 } break;
                 case KEY_BACKSPACE:
                 case 127:
@@ -94,7 +100,7 @@ void lake_shell::run() {
         reset_shell_mode();
         if (command_input == EXIT_KWD) {
             m_running = false;
-        } else {
+        } else if (!direct_command){
             auto cmds = process_input(command_input);
             lsh::cmd::handle_commands(cmds);
             m_history.add(command_input);
