@@ -3,6 +3,7 @@
 #include "cmd_handler.hpp"
 #include "tokenizer.hpp"
 #include "usr.hpp"
+#include "utils/utils.hpp"
 #include <climits>
 #include <cstring>
 #include <iostream>
@@ -55,7 +56,6 @@ void lake_shell::run() {
                     mvwinstr(win, y, x, inbuf);
                     collecting_input = false;
                     clear();
-                    display_prompt();
                     break;
                 case KEY_BACKSPACE:
                 case KEY_DC:
@@ -70,13 +70,18 @@ void lake_shell::run() {
             }
         }
         std::string command_input(inbuf);
+        trim(command_input);
         free(inbuf);
         echo();
         refresh();
         move(y + 1, 0);
         reset_shell_mode();
-        auto cmds = process_input(command_input);
-        lsh::cmd::handle_commands(cmds);
+        if (command_input == "exit") {
+            running = false;
+        } else {
+            auto cmds = process_input(command_input);
+            lsh::cmd::handle_commands(cmds);
+        }
         reset_prog_mode();
         noecho();
         refresh();

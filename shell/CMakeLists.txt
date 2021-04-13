@@ -18,6 +18,9 @@ set(SRC
         cmd/cmd_pwd.cpp
         cmd/cmd_cd.cpp
 
+        utils/utils.cpp
+        utils/utils.hpp
+
         main.cpp
         )
 
