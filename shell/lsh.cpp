@@ -36,7 +36,6 @@ lake_shell::~lake_shell() {
 void lake_shell::run() {
     display_prompt();
     while (m_running) {
-        m_shell_context.refresh();
         char *inbuf = (char *) malloc(sizeof(char) * 2048);
         bool collecting_input = true;
         bool direct_command = false;
@@ -92,7 +91,6 @@ void lake_shell::run() {
         free(inbuf);
         echo();
         refresh();
-                reset_shell_mode();
         if (command_input == EXIT_KWD) {
             m_running = false;
         } else if (!direct_command) {
@@ -111,8 +109,8 @@ void lake_shell::run() {
             }
             m_history.add(command_input);
         }
-                reset_prog_mode();
         noecho();
+        m_shell_context.refresh();
         display_prompt();
         refresh();
     }
@@ -127,7 +125,11 @@ void lake_shell::display_prompt() {
     mvaddstr(y, 0, m_shell_context.get_username().c_str());
     addstr(" @ ");
     addstr(m_shell_context.get_working_dir().c_str());
-    addstr(" >> ");
+    if (m_shell_context.is_git_dir()) {
+        addstr("(git) >> ");
+    } else {
+        addstr(" >> ");
+    }
     noecho();
 }
 

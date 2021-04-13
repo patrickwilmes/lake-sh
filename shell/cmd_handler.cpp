@@ -1,11 +1,11 @@
 #include "cmd_handler.hpp"
 #include "cmd/cmd.hpp"
 #include <iostream>
+#include <ncurses.h>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
-#include <ncurses.h>
 
 bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
 void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
@@ -85,7 +85,7 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
             i++;
         }
         args[i] = NULL;
-        if(pipe(fd) == -1) {
+        if (pipe(fd) == -1) {
             return "";
         }
         pid_t p;
@@ -93,28 +93,33 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
         if (pid < 0) {
             std::cerr << "fork failed" << std::endl;
         } else if (pid == 0) {
-            close(fd[0]);
-            dup2(fd[1], 1);
-            dup2(fd[1], 2);
-            close(fd[1]);
+            if (cmd_to_exec->name != "clear") {
+                close(fd[0]);
+                dup2(fd[1], 1);
+                dup2(fd[1], 2);
+                close(fd[1]);
+            }
             execvp(c, args);
             std::cerr << "exec failed" << std::endl;
         } else {
             do {
                 p = wait(&child_status);
             } while (p != pid);
-            char buffer[2048];
-            close(fd[1]);
-            while (read(fd[0], buffer, sizeof(buffer)) != 0);
-            std::string data(buffer);
-            return data;
+            if (cmd_to_exec->name != "clear") {
+                char buffer[2048];
+                close(fd[1]);
+                while (read(fd[0], buffer, sizeof(buffer)) != 0)
+                    ;
+                std::string data(buffer);
+                return data;
+            }
         }
     } else {
         std::string commands;
         std::for_each(cmds.begin(), cmds.end(), [&](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
             std::string command(cmd->name);
             command += " ";
-            std::for_each(cmd->args.begin(), cmd->args.end(), [&](const std::string &arg){
+            std::for_each(cmd->args.begin(), cmd->args.end(), [&](const std::string &arg) {
                 command = command + " " + arg;
             });
             if (!commands.empty())
@@ -123,8 +128,8 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
                 commands = command;
         });
         system(commands.c_str());
-//        piped_executor executor(cmds);
-//        executor.execute();
+        //        piped_executor executor(cmds);
+        //        executor.execute();
     }
     return "";
 }

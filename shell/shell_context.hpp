@@ -12,7 +12,9 @@ namespace lsh {
         std::string get_user_home();
         std::string get_username();
         std::string get_relative_working_dir();
+        bool is_git_dir();
     private:
+        bool m_is_git;
         std::string m_current_wd;
         std::string m_user_home;
         std::string m_username;

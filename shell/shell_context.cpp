@@ -17,6 +17,10 @@ void lsh::shell_context::refresh() {
 
     m_current_dirs = get_dirs_for(wd);
 
+    if (std::find(m_current_dirs.begin(), m_current_dirs.end(), ".git") != m_current_dirs.end()) {
+        m_is_git = true;
+    }
+
     free(wd_cstr);
     free(home_cstr);
     free(username_cstr);
@@ -33,6 +37,11 @@ std::string lsh::shell_context::get_user_home() {
 std::string lsh::shell_context::get_username() {
     return m_username;
 }
+
 std::string lsh::shell_context::get_relative_working_dir() {
     return std::string();
+}
+
+bool lsh::shell_context::is_git_dir() {
+    return m_is_git;
 }
