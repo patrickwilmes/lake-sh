@@ -16,17 +16,13 @@ public:
     explicit piped_executor(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) : m_cmds(std::move(cmds)) {}
 
     void execute() {
-        int pid;
-        int pipe1[2];
-        int pipe2[2];
-        bool is_pipe1_write = true;
-        uint32_t counter = 0;
-        std::for_each(m_cmds.begin(), m_cmds.end(), [&](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
-            if (pipe(pipe1) == -1) {
-                std::cerr << "failed pipe" << std::endl;
-            }
-            ++counter;
-        });
+        int p[2];
+        pipe(p);
+        int pid = fork();
+
+        if (pid == 0) {
+
+        }
     }
 
 private:
