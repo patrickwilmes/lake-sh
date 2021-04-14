@@ -81,14 +81,51 @@ int fork_pipes(int n, struct command *cmd) {
     return execvp(cmd[i].argv[0], (char * const *)cmd[i].argv);
 }
 
+int spawn_command(char **cmd, int input, bool is_first, bool is_last) {
+    int fd[2];
+    pipe(fd);
+    int pid = fork();
+    if (pid == 0) {
+        if (is_first) {
+            dup2(fd[1], STDOUT_FILENO);
+        } else if (is_last) {
+            dup2(input, STDIN_FILENO);
+        } else {
+            dup2(input, STDIN_FILENO);
+            dup2(fd[1], STDOUT_FILENO);
+        }
+
+        if (execvp(cmd[0], cmd) == -1) {
+            exit(-1);
+        }
+    }
+    if (input != 0) {
+        close(input);
+    }
+    close(fd[1]);
+    if (is_last) {
+        close(fd[0]);
+    }
+    return fd[0];
+}
+
+typedef struct {
+    char **argv;
+}cmd_t;
+
 int main() {
     //    return execute_simple_pipe_example();
-    const char *ls[] = { "ls", "-l", 0 };
-    const char *awk[] = { "awk", "{print $1}", 0 };
-    const char *sort[] = { "sort", 0 };
-    const char *uniq[] = { "uniq", 0 };
-
-    struct command cmd [] = { {ls}, {awk}, {sort}, {uniq} };
-
-    return fork_pipes (4, cmd);
+    char *ls[] = { "ls", "-l", 0 };
+    char *awk[] = { "awk", "{print $1}", 0 };
+    char *sort[] = { "sort", 0 };
+    char *uniq[] = { "uniq", 0 };
+//
+    cmd_t cmd [] = { {ls}, {awk}, {sort}, {uniq} };
+    int input = 0;
+    for (int i = 0; i < 4; i++) {
+        input = spawn_command(cmd[i].argv, input, i == 0, i == 3);
+    }
+//
+//    return fork_pipes (4, cmd);
+    return 0;
 }

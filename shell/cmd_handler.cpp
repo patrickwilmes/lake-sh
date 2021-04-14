@@ -1,6 +1,7 @@
 #include "cmd_handler.hpp"
 #include "cmd/cmd.hpp"
 #include <iostream>
+#include <ncurses.h>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -14,10 +15,63 @@ class piped_executor final {
 public:
     explicit piped_executor(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) : m_cmds(std::move(cmds)) {}
 
-    void execute() {
+    std::string execute() {
+        int input = 0;
+        int num_cmds = m_cmds.size();
+        for (int i = 0; i < num_cmds; i++) {
+            input = spawn_command(m_cmds[i], input, i == 0, i == num_cmds - 1);
+        }
+        char buffer[2048];
+        while (read(input, buffer, sizeof(buffer)) != 0)
+            ;
+        std::string data(buffer);
+        close(input);
+        return data;
     }
 
 private:
+    int spawn_command(std::shared_ptr<lsh::assembler::cmd> cmd, int input, bool is_first, bool is_last) {
+        int pid;
+        int fd[2];
+        pipe(fd);
+
+        pid = fork();
+
+        if (pid == 0) {
+            if (is_first) {
+                dup2(fd[1], STDOUT_FILENO);
+            } else if (is_last) {
+                dup2(input, STDIN_FILENO);
+                dup2(fd[1], STDOUT_FILENO);// exp
+            } else {
+                dup2(input, STDIN_FILENO);
+                dup2(fd[1], STDOUT_FILENO);
+            }
+            const char *c = cmd->name.c_str();
+            char *args[cmd->args.size() + 2];// = {const_cast<char *>(c), const_cast<char *>(latr), NULL};
+            args[0] = const_cast<char *>(c);
+            int i = 1;
+            for (auto &arg : cmd->args) {
+                args[i] = const_cast<char *>(arg.c_str());
+                i++;
+            }
+            args[i] = NULL;
+            if (execvp(cmd->name.c_str(), args) == -1) {
+                exit(-1);
+            }
+        }
+
+        if (input != 0) {
+            close(input);
+        }
+
+        close(fd[1]);
+
+        //        if (is_last)
+        //            close(fd[0]);
+
+        return fd[0];
+    }
 
 private:
     const std::vector<std::shared_ptr<lsh::assembler::cmd>> m_cmds;
@@ -109,9 +163,8 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
             else
                 commands = command;
         });
-        system(commands.c_str());
-        //        piped_executor executor(cmds);
-        //        executor.execute();
+        piped_executor executor(cmds);
+        return executor.execute();
     }
     return "";
 }
