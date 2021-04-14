@@ -1,4 +1,5 @@
 #include "lsh.hpp"
+#include "cmd.hpp"
 #include "cmd_assembler.hpp"
 #include "cmd_handler.hpp"
 #include "tokenizer.hpp"
@@ -13,7 +14,7 @@ static const std::string EXIT_KWD = "exit";
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
 
-std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line);
+std::vector<std::shared_ptr<lsh::cmd::command>> process_input(std::string &line);
 
 lake_shell::lake_shell() : m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)) {
     m_win = initscr();
@@ -138,7 +139,7 @@ void lake_shell::display_prompt() {
     noecho();
 }
 
-std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line) {
+std::vector<std::shared_ptr<lsh::cmd::command>> process_input(std::string &line) {
     auto tokens = lsh::tokenizer::tokenize(line);
     return lsh::assembler::assemble_commands(tokens);
 }

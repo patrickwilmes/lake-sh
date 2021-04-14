@@ -14,10 +14,6 @@ set(SRC
         cmd_handler.cpp
         cmd_handler.hpp
 
-        cmd/cmd.hpp
-        cmd/cmd_pwd.cpp
-        cmd/cmd_cd.cpp
-
         utils/utils.cpp
         utils/utils.hpp
 
@@ -29,6 +25,9 @@ set(SRC
 
         alias.cpp
         alias.hpp
+
+        cmd.hpp
+        cmd.cpp
 
         )
 
