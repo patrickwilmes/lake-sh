@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
-#include <assert.h>
+#include <cassert>
 
 class piped_executor final {
 public:
@@ -121,17 +121,21 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
             chdir(path_string.c_str());
         }
     } else if (cmd_name == ALIAS) {
+        cmd->ensure_has_args(2);
         m_shell_context->add_alias(args[0], args[1]);
     } else if (cmd_name == EXPORT) {
+        cmd->ensure_has_args(1);
         std::string arg = args[0];
         auto key = arg.substr(0, arg.find('='));
         auto value = arg.substr(arg.find('=') + 1, arg.length());
         setenv(key.c_str(), value.c_str(), true);
     } else if (cmd_name == UNEXPORT) {
+        cmd->ensure_has_args(1);
         std::string arg = args[0];
         auto key = arg.substr(0, arg.find('='));
         unsetenv(key.c_str());
     } else if (cmd_name == ECHO) {
+        cmd->ensure_has_args(1);
         std::string arg = args[0];
         if (arg[0] == '$') {
             auto key = arg.substr(1, arg.length());
@@ -140,7 +144,7 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
         }
         return arg;
     }
-    return "";
+    throw command_not_found_exception(cmd_name.c_str());
 }
 
 std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std::shared_ptr<lsh::cmd::command>> &cmds) {
