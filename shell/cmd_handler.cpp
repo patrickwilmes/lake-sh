@@ -63,9 +63,6 @@ private:
 
         close(fd[1]);
 
-        //        if (is_last)
-        //            close(fd[0]);
-
         return fd[0];
     }
 
