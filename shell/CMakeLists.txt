@@ -27,9 +27,14 @@ set(SRC
         shell_context.cpp
         shell_context.hpp
 
-        main.cpp
         )
 
-add_executable(lsh ${SRC} )
-target_include_directories(lsh PRIVATE src)
+set(CLION_SRC
+        clion_launch.cpp
+        )
+
+add_executable(lsh main.cpp ${SRC} )
 target_link_libraries(lsh ncurses)
+
+add_executable(clion_debug ${CLION_SRC} ${SRC})
+target_link_libraries(clion_debug ncurses)
