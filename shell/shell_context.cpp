@@ -1,6 +1,10 @@
 #include "shell_context.hpp"
+
+#include <utility>
 #include "usr.hpp"
 #include "utils/utils.hpp"
+
+using namespace lsh;
 
 void lsh::shell_context::refresh() {
     m_current_wd = lsh::usr::current_wd();
@@ -30,4 +34,16 @@ std::string lsh::shell_context::get_relative_working_dir() {
 
 bool lsh::shell_context::is_git_dir() {
     return m_is_git;
+}
+
+void lsh::shell_context::add_alias(std::string name, std::string origin) {
+    m_alias_container.add(std::move(name), std::move(origin));
+}
+
+bool lsh::shell_context::alias_exists(std::string &name) {
+    return m_alias_container.exists(name);
+}
+
+std::string lsh::shell_context::get_origin_of_alias(std::string &name) {
+    return m_alias_container.get_origin(name);
 }

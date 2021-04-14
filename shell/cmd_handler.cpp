@@ -1,17 +1,11 @@
 #include "cmd_handler.hpp"
 #include "cmd/cmd.hpp"
+#include "shell_context.hpp"
 #include <iostream>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
-#include <ncurses.h>
-
-bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
-void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
-std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds);
-
-bool is_not_sync_command(std::shared_ptr<lsh::assembler::cmd> cmd);
 
 class piped_executor final {
 public:
@@ -80,8 +74,8 @@ private:
 };
 
 
-std::string lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) {
-    auto copy_if_is_external_cmd = [](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+std::string lsh::cmd::command_handler::handle_commands(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) {
+    auto copy_if_is_external_cmd = [&](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
         return !is_own_cmd(cmd);
     };
 
@@ -97,27 +91,34 @@ std::string lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler
     return handle_extern_cmds(extern_cmds);
 }
 
-bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+lsh::cmd::command_handler::command_handler(std::shared_ptr<shell_context> &shell_context): m_shell_context(shell_context) { }
+
+bool lsh::cmd::command_handler::is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
     std::vector<std::string> own_cmds = {
-            "pwd", "cd"};
+            "pwd", "cd", "alias"};
     return std::find(own_cmds.begin(), own_cmds.end(), cmd->name) != own_cmds.end();
 }
 
-void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+void lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
     if (cmd->name == "pwd") {
         lsh::cmd::handle_pwd(cmd);
     } else if (cmd->name == "cd") {
         lsh::cmd::handle_cd(cmd);
+    } else if (cmd->name == "alias") {
+        m_shell_context->add_alias(cmd->args[0], cmd->args[1]);
     }
 }
 
-std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds) {
+std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds) {
     if (cmds.size() == 1) {
         int fd[2];
         auto cmd_to_exec = cmds.front();
+        if (m_shell_context->alias_exists(cmd_to_exec->name)) {
+            cmd_to_exec->name = m_shell_context->get_origin_of_alias(cmd_to_exec->name);
+        }
         int child_status;
         const char *c = cmd_to_exec->name.c_str();
-        char *args[cmd_to_exec->args.size() + 2];// = {const_cast<char *>(c), const_cast<char *>(latr), NULL};
+        char *args[cmd_to_exec->args.size() + 2];
         args[0] = const_cast<char *>(c);
         int i = 1;
         for (auto &arg : cmd_to_exec->args) {
@@ -173,6 +174,6 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
     return "";
 }
 
-bool is_not_sync_command(std::shared_ptr<lsh::assembler::cmd> cmd) {
+bool lsh::cmd::command_handler::is_not_sync_command(std::shared_ptr<lsh::assembler::cmd> cmd) {
     return cmd->name != "clear";
 }

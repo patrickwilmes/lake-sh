@@ -27,6 +27,9 @@ set(SRC
         shell_context.cpp
         shell_context.hpp
 
+        alias.cpp
+        alias.hpp
+
         )
 
 set(CLION_SRC

@@ -15,14 +15,14 @@ constexpr int ENTER_KEY = 10;
 
 std::vector<std::shared_ptr<lsh::assembler::cmd>> process_input(std::string &line);
 
-lake_shell::lake_shell() : m_shell_context(shell_context()), m_history(history(256)) {
+lake_shell::lake_shell() : m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)) {
     m_win = initscr();
     clear();
     cbreak();
     noecho();
     keypad(stdscr, true);
 
-    m_shell_context.refresh();
+    m_shell_context->refresh();
 }
 
 lake_shell::~lake_shell() {
@@ -92,7 +92,7 @@ void lake_shell::run() {
         } else if (!direct_command) {
             if (!command_input.empty()) {
                 auto cmds = process_input(command_input);
-                std::string render_data = lsh::cmd::handle_commands(cmds);
+                std::string render_data = m_cmd_handler.handle_commands(cmds);
                 trim(render_data);
                 if (!render_data.empty()) {
                     std::stringstream ss(render_data);
@@ -111,7 +111,7 @@ void lake_shell::run() {
             }
         }
         noecho();
-        m_shell_context.refresh();
+        m_shell_context->refresh();
         display_prompt();
         refresh();
     }
@@ -123,14 +123,14 @@ void lake_shell::display_prompt() {
     y++;
     echo();
     start_color();
-    mvaddstr(y, 0, m_shell_context.get_username().c_str());
+    mvaddstr(y, 0, m_shell_context->get_username().c_str());
     addstr(" @ ");
-    auto user_home = m_shell_context.get_user_home();
-    auto working_dir = m_shell_context.get_working_dir();
+    auto user_home = m_shell_context->get_user_home();
+    auto working_dir = m_shell_context->get_working_dir();
     auto prompt_dir = working_dir.replace(0, user_home.length(), "");
     prompt_dir = "~" + prompt_dir;
     addstr(prompt_dir.c_str());
-    if (m_shell_context.is_git_dir()) {
+    if (m_shell_context->is_git_dir()) {
         addstr("(git) >> ");
     } else {
         addstr(" >> ");

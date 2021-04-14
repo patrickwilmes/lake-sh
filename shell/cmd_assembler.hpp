@@ -12,7 +12,6 @@ namespace lsh::assembler {
     } cmd;
 
     std::vector<std::shared_ptr<cmd>> assemble_commands(std::vector<std::string> tokens);
-    void free_commands(std::vector<cmd *> cmds);
 }// namespace lsh::assembler
 
 #endif//LAKE_SH_CMD_ASSEMBLER_H
