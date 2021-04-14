@@ -1,0 +1,1 @@
+add_executable(pipe_plg pipe_plg.cpp)
