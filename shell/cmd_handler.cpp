@@ -94,7 +94,7 @@ std::string lsh::cmd::command_handler::handle_commands(std::vector<std::shared_p
 lsh::cmd::command_handler::command_handler(std::shared_ptr<shell_context> &shell_context): m_shell_context(shell_context) { }
 
 bool lsh::cmd::command_handler::is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
-    std::vector<std::string> own_cmds = {
+    const std::vector<std::string> own_cmds = {
             "pwd", "cd", "alias"};
     return std::find(own_cmds.begin(), own_cmds.end(), cmd->name) != own_cmds.end();
 }
