@@ -1,7 +1,6 @@
 #include "cmd_handler.hpp"
 #include "cmd/cmd.hpp"
 #include <iostream>
-#include <ncurses.h>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -16,22 +15,9 @@ public:
     explicit piped_executor(std::vector<std::shared_ptr<lsh::assembler::cmd>> cmds) : m_cmds(std::move(cmds)) {}
 
     void execute() {
-        int p[2];
-        pipe(p);
-        int pid = fork();
-
-        if (pid == 0) {
-
-        }
     }
 
 private:
-    void execute_front_piped(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
-    }
-    void execute_mid_piped(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
-    }
-    void execute_back_piped(const std::shared_ptr<lsh::assembler::cmd> &cmd) {
-    }
 
 private:
     const std::vector<std::shared_ptr<lsh::assembler::cmd>> m_cmds;
