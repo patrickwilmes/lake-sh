@@ -1,7 +1,6 @@
 #include "cmd_handler.hpp"
 #include "cmd/cmd.hpp"
 #include <iostream>
-#include <ncurses.h>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
