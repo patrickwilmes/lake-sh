@@ -124,7 +124,11 @@ void lake_shell::display_prompt() {
     start_color();
     mvaddstr(y, 0, m_shell_context.get_username().c_str());
     addstr(" @ ");
-    addstr(m_shell_context.get_working_dir().c_str());
+    auto user_home = m_shell_context.get_user_home();
+    auto working_dir = m_shell_context.get_working_dir();
+    auto prompt_dir = working_dir.replace(0, user_home.length(), "");
+    prompt_dir = "~" + prompt_dir;
+    addstr(prompt_dir.c_str());
     if (m_shell_context.is_git_dir()) {
         addstr("(git) >> ");
     } else {
