@@ -1,15 +1,17 @@
 #ifndef LAKE_SH_USR_HPP
 #define LAKE_SH_USR_HPP
 
+#include <string>
+
 namespace lsh::usr {
 
     constexpr int MAX_USERNAME_LEN = 32;
 
-    char * get_user_name();
+    std::string get_user_name();
 
-    char * current_wd();
+    std::string current_wd();
 
-    char * usr_home_dir();
+    std::string usr_home_dir();
 }
 
 #endif//LAKE_SH_USR_HPP
