@@ -106,6 +106,7 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
             std::string usr_home = lsh::usr::usr_home_dir();
             chdir(usr_home.c_str());
         } else {
+            cmd->ensure_has_args(1);
             auto resolve_path = [](std::string &origin_path) {
               std::string wd = lsh::usr::current_wd();
               if (origin_path == "..") {

@@ -93,22 +93,36 @@ void lake_shell::run() {
         } else if (!direct_command) {
             if (!command_input.empty()) {
                 auto cmds = process_input(command_input);
-                std::string render_data = m_cmd_handler.handle_commands(cmds);
-                trim(render_data);
-                if (!render_data.empty()) {
-                    std::stringstream ss(render_data);
-                    std::string target;
+                try {
+                    std::string render_data = m_cmd_handler.handle_commands(cmds);
+                    trim(render_data);
+                    if (!render_data.empty()) {
+                        std::stringstream ss(render_data);
+                        std::string target;
+                        int cy, cx;
+                        getyx(m_win, cy, cx);
+                        cy++;
+                        while (std::getline(ss, target, '\n')) {
+                            if (!target.empty()) {
+                                mvaddstr(cy, 0, target.c_str());
+                                cy++;
+                            }
+                        }
+                    }
+                    m_history.add(command_input);
+                } catch (invalid_command_exception &e) {
                     int cy, cx;
                     getyx(m_win, cy, cx);
                     cy++;
-                    while (std::getline(ss, target, '\n')) {
-                        if (!target.empty()) {
-                            mvaddstr(cy, 0, target.c_str());
-                            cy++;
-                        }
-                    }
+                    mvaddstr(cy, 0, "invalid command call: ");
+                    addstr(e.what());
+                } catch (command_not_found_exception &e) {
+                    int cy, cx;
+                    getyx(m_win, cy, cx);
+                    cy++;
+                    mvaddstr(cy, 0, "command not found: ");
+                    addstr(e.what());
                 }
-                m_history.add(command_input);
             }
         }
         noecho();
