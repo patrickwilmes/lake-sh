@@ -5,10 +5,10 @@
 #include <unistd.h>
 
 std::string resolve_path(std::string &origin_path) {
+    std::string wd = lsh::usr::current_wd();
     if (origin_path == "..") {
-        return origin_path.substr(0, origin_path.rfind('/') - 1);
+        return wd.substr(0, wd.rfind('/'));
     } else if ((origin_path[0] != '.' && origin_path[0] != '/') || (origin_path[0] == '.' && origin_path[1] == '/')) {
-        std::string wd = lsh::usr::current_wd();
         return wd + "/" + origin_path;
     }
     assert(origin_path[0] == '/');
@@ -20,6 +20,7 @@ void lsh::cmd::handle_cd(const std::shared_ptr<lsh::assembler::cmd>& cmd) {
         std::string usr_home = lsh::usr::usr_home_dir();
         chdir(usr_home.c_str());
     } else {
-        chdir(resolve_path(cmd->args[0]).c_str());
+        std::string path_string = resolve_path(cmd->args[0]);
+        chdir(path_string.c_str());
     }
 }

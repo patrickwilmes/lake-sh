@@ -5,10 +5,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
+#include <ncurses.h>
 
 bool is_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
 void handle_own_cmd(const std::shared_ptr<lsh::assembler::cmd> &cmd);
 std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler::cmd>> &cmds);
+
+bool is_not_sync_command(std::shared_ptr<lsh::assembler::cmd> cmd);
 
 class piped_executor final {
 public:
@@ -82,11 +85,13 @@ std::string lsh::cmd::handle_commands(std::vector<std::shared_ptr<lsh::assembler
         return !is_own_cmd(cmd);
     };
 
-    std::for_each(cmds.begin(), cmds.end(), [](const std::shared_ptr<lsh::assembler::cmd> &cmd) {
+    for (auto &cmd : cmds) {
         if (is_own_cmd(cmd)) {
             handle_own_cmd(cmd);
+            return "";
         }
-    });
+    }
+
     std::vector<std::shared_ptr<lsh::assembler::cmd>> extern_cmds;
     std::copy_if(cmds.begin(), cmds.end(), std::back_inserter(extern_cmds), copy_if_is_external_cmd);
     return handle_extern_cmds(extern_cmds);
@@ -128,7 +133,7 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
         if (pid < 0) {
             std::cerr << "fork failed" << std::endl;
         } else if (pid == 0) {
-            if (cmd_to_exec->name != "clear") {
+            if (is_not_sync_command(cmd_to_exec)) {
                 close(fd[0]);
                 dup2(fd[1], 1);
                 dup2(fd[1], 2);
@@ -140,7 +145,7 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
             do {
                 p = wait(&child_status);
             } while (p != pid);
-            if (cmd_to_exec->name != "clear") {
+            if (is_not_sync_command(cmd_to_exec)) {
                 char buffer[2048];
                 close(fd[1]);
                 while (read(fd[0], buffer, sizeof(buffer)) != 0)
@@ -166,4 +171,8 @@ std::string handle_extern_cmds(const std::vector<std::shared_ptr<lsh::assembler:
         return executor.execute();
     }
     return "";
+}
+
+bool is_not_sync_command(std::shared_ptr<lsh::assembler::cmd> cmd) {
+    return cmd->name != "clear";
 }
