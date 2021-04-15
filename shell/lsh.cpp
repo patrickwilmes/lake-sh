@@ -91,6 +91,7 @@ void lake_shell::run() {
             m_running = false;
         } else if (!direct_command) {
             if (!command_input.empty()) {
+                m_logger.log_info("ah thats what i am talking about");
                 auto cmds = process_input(command_input);
                 try {
                     std::string render_data = m_cmd_handler.handle_commands(cmds);

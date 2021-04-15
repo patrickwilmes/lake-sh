@@ -2,7 +2,11 @@
 
 void lsh::logger::log_info(const std::string msg) {
 #ifdef SHELL_DEBUG
-    mvwaddstr(m_win, 10, 10, msg.c_str());
+    int y, x;
+    getyx(m_win, y, x);
+    mvwaddstr(m_win, 20, 0, msg.c_str());
+    move(y, x);
+    refresh();
 #endif
 }
 
