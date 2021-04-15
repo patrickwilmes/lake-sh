@@ -29,6 +29,8 @@ set(SRC
         cmd.hpp
         cmd.cpp
 
+        logger.cpp
+        logger.hpp
         )
 
 set(CLION_SRC
