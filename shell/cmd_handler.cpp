@@ -119,6 +119,7 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
             };
             std::string path_string = resolve_path(args[0]);
             chdir(path_string.c_str());
+            return "";
         }
     } else if (cmd_name == ALIAS) {
         cmd->ensure_has_args(2);
