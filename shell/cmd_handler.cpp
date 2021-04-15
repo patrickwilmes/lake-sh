@@ -8,6 +8,7 @@
 #include <utility>
 #include <cassert>
 #include <filesystem>
+#include <ncurses.h>
 
 class piped_executor final {
 public:
@@ -129,17 +130,16 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
         m_shell_context->add_alias(args[0], args[1]);
         return "";
     } else if (cmd_name == EXPORT) {
-        cmd->ensure_has_args(1);
+        cmd->ensure_has_args(2);
         std::string arg = args[0];
-        auto key = arg.substr(0, arg.find('='));
-        auto value = arg.substr(arg.find('=') + 1, arg.length());
-        setenv(key.c_str(), value.c_str(), true);
+        auto key = args[0].c_str();
+        auto value = args[1].c_str();
+        setenv(key, value, true);
         return "";
     } else if (cmd_name == UNEXPORT) {
         cmd->ensure_has_args(1);
         std::string arg = args[0];
-        auto key = arg.substr(0, arg.find('='));
-        unsetenv(key.c_str());
+        unsetenv(arg.c_str());
         return "";
     } else if (cmd_name == ECHO) {
         cmd->ensure_has_args(1);
@@ -203,19 +203,6 @@ std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std:
             }
         }
     } else {
-        std::string commands;
-        std::for_each(cmds.begin(), cmds.end(), [&](const std::shared_ptr<lsh::cmd::command> &cmd) {
-            std::string command(cmd->get_name());
-            command += " ";
-            auto args = cmd->get_args();
-            std::for_each(args.begin(), args.end(), [&](const std::string &arg) {
-                command = command + " " + arg;
-            });
-            if (!commands.empty())
-                commands = commands + "|" + command;
-            else
-                commands = command;
-        });
         piped_executor executor(cmds);
         return executor.execute();
     }
@@ -227,7 +214,10 @@ bool lsh::cmd::command_handler::is_not_sync_command(std::shared_ptr<lsh::cmd::co
 }
 
 bool lsh::cmd::command_handler::external_cmd_exists(std::shared_ptr<lsh::cmd::command> cmd) {
-    return std::find(m_available_commands.begin(), m_available_commands.end(), cmd->get_name()) != m_available_commands.end();
+    auto name = cmd->get_name();
+    bool exists_in_path = std::find(m_available_commands.begin(), m_available_commands.end(), name) != m_available_commands.end();
+    bool is_alias = m_shell_context->alias_exists(name);
+    return exists_in_path || is_alias;
 }
 
 void lsh::cmd::command_handler::validate_external_commands(std::vector<std::shared_ptr<lsh::cmd::command>> cmds) {
