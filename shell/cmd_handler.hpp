@@ -20,7 +20,12 @@ namespace lsh::cmd {
 
         bool is_not_sync_command(std::shared_ptr<lsh::cmd::command> cmd);
 
+        bool external_cmd_exists(std::shared_ptr<lsh::cmd::command> cmd);
+        void validate_external_commands(std::vector<std::shared_ptr<lsh::cmd::command>> cmds);
+
+        void index_path();
     private:
+        std::vector<std::string> m_available_commands;
         std::shared_ptr<shell_context> m_shell_context;
         static constexpr std::string_view PWD = "pwd";
         static constexpr std::string_view CD = "cd";

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <utility>
 #include <cassert>
+#include <filesystem>
 
 class piped_executor final {
 public:
@@ -89,7 +90,9 @@ std::string lsh::cmd::command_handler::handle_commands(std::vector<std::shared_p
     return handle_extern_cmds(extern_cmds);
 }
 
-lsh::cmd::command_handler::command_handler(std::shared_ptr<shell_context> &shell_context): m_shell_context(shell_context) { }
+lsh::cmd::command_handler::command_handler(std::shared_ptr<shell_context> &shell_context): m_shell_context(shell_context) {
+    index_path();
+}
 
 bool lsh::cmd::command_handler::is_own_cmd(const std::shared_ptr<lsh::cmd::command> &cmd) {
     return std::find(m_own_cmds.begin(), m_own_cmds.end(), cmd->get_name()) != m_own_cmds.end();
@@ -152,6 +155,7 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
 }
 
 std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std::shared_ptr<lsh::cmd::command>> &cmds) {
+    validate_external_commands(cmds);
     if (cmds.size() == 1) {
         int fd[2];
         auto cmd_to_exec = cmds.front();
@@ -220,4 +224,30 @@ std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std:
 
 bool lsh::cmd::command_handler::is_not_sync_command(std::shared_ptr<lsh::cmd::command> cmd) {
     return cmd->get_name() != "clear";
+}
+
+bool lsh::cmd::command_handler::external_cmd_exists(std::shared_ptr<lsh::cmd::command> cmd) {
+    return std::find(m_available_commands.begin(), m_available_commands.end(), cmd->get_name()) != m_available_commands.end();
+}
+
+void lsh::cmd::command_handler::validate_external_commands(std::vector<std::shared_ptr<lsh::cmd::command>> cmds) {
+    for (auto &cmd : cmds) {
+        if (!external_cmd_exists(cmd)) {
+            throw command_not_found_exception(cmd->get_name().c_str());
+        }
+    }
+}
+
+void lsh::cmd::command_handler::index_path() {
+    std::string path(getenv("PATH"));
+    const std::string delim = ":";
+
+    size_t pos = 0;
+    std::string token;
+    while ((pos = path.find(delim)) != std::string::npos) {
+        token = path.substr(0, pos);
+        for (const auto & entry : std::filesystem::directory_iterator(token))
+            m_available_commands.push_back(entry.path().filename().string());
+        path.erase(0, pos + delim.length());
+    }
 }
