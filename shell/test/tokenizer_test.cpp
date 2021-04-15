@@ -22,3 +22,22 @@ TEST_CASE("lexing a simple single word command") {
     REQUIRE(tokens.size() == 1);
     REQUIRE(tokens[0] == "ls");
 }
+
+TEST_CASE("lexing an echo command having a space separated text") {
+    std::string cmd = "echo \"hello world\"";
+    auto tokens = lsh::tokenizer::tokenize(cmd);
+
+    REQUIRE(tokens.size() == 2);
+    REQUIRE(tokens[0] == "echo");
+    REQUIRE(tokens[1] == "hello world");
+}
+
+TEST_CASE("lexing piped commands") {
+    std::string cmd = "ls -latr | sort";
+    auto tokens = lsh::tokenizer::tokenize(cmd);
+
+    REQUIRE(tokens.size() == 3);
+    REQUIRE(tokens[0] == "ls");
+    REQUIRE(tokens[1] == "-latr");
+    REQUIRE(tokens[2] == "sort");
+}
