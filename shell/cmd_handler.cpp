@@ -124,17 +124,20 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
     } else if (cmd_name == ALIAS) {
         cmd->ensure_has_args(2);
         m_shell_context->add_alias(args[0], args[1]);
+        return "";
     } else if (cmd_name == EXPORT) {
         cmd->ensure_has_args(1);
         std::string arg = args[0];
         auto key = arg.substr(0, arg.find('='));
         auto value = arg.substr(arg.find('=') + 1, arg.length());
         setenv(key.c_str(), value.c_str(), true);
+        return "";
     } else if (cmd_name == UNEXPORT) {
         cmd->ensure_has_args(1);
         std::string arg = args[0];
         auto key = arg.substr(0, arg.find('='));
         unsetenv(key.c_str());
+        return "";
     } else if (cmd_name == ECHO) {
         cmd->ensure_has_args(1);
         std::string arg = args[0];
