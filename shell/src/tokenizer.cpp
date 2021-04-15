@@ -3,6 +3,7 @@
 
 std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
     std::vector<std::string> tokens;
+    const uint32_t origin_len = line.length();
     const std::string std_delim = " ";
 
     size_t pos;
@@ -27,7 +28,7 @@ std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
 
         tokens.push_back(token);
     }
-    if (line.length() > 2)
+    if (line.length() > 2 || line.length() == origin_len)
         tokens.push_back(line);
     return tokens;
 }
