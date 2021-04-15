@@ -9,18 +9,16 @@
 void show_usage();
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        show_usage();
-        return EXIT_FAILURE;
-    }
     std::shared_ptr<lsh::shell_context> shell_ctx = std::make_shared<lsh::shell_context>();
     lsh::cmd::command_handler handler(shell_ctx);
-    std::string command(argv[1]);
-    command = command.substr(1, command.length() -1);
-    auto tokens = lsh::tokenizer::tokenize(command);
-    auto cmds = lsh::assembler::assemble_commands(tokens);
-    auto response = handler.handle_commands(cmds);
-    std::cout << response << '\n' << std::flush;
+    std::string command;
+    std::getline(std::cin, command);
+    try {
+        auto tokens = lsh::tokenizer::tokenize(command);
+        auto cmds = lsh::assembler::assemble_commands(tokens);
+        auto response = handler.handle_commands(cmds);
+        std::cout << response << '\n' << std::flush;
+    } catch (std::exception &e) {}
 }
 
 void show_usage() {

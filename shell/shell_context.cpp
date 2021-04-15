@@ -37,7 +37,7 @@ bool lsh::shell_context::is_git_dir() {
 }
 
 void lsh::shell_context::add_alias(std::string name, std::string origin) {
-    printf("adding alias %s %s", name.c_str(), origin.c_str());
+    printf("adding alias %s -- %s", name.c_str(), origin.c_str());
     m_alias_container.add(std::move(name), std::move(origin));
 }
 

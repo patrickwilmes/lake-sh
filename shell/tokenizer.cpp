@@ -1,32 +1,33 @@
 #include "tokenizer.hpp"
-#include <cassert>
+#include "utils/utils.hpp"
 
 std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
     std::vector<std::string> tokens;
-
     const std::string std_delim = " ";
 
-    size_t pos = 0;
+    size_t pos;
     std::string token;
 
     while ((pos = line.find(std_delim)) != std::string::npos) {
+        trim(line);
         if (line[0] != '"') {
-            token = line.substr(0, pos);
-            line.erase(0, pos + 1);
-        } else {
             size_t sdelim_pos = line.find('=');
             if (sdelim_pos < pos) {
                 token = line.substr(0, sdelim_pos);
                 line.erase(0, sdelim_pos + 1);
             } else {
-                size_t end_pos = line.find('"', 1);
-                token = line.substr(1, end_pos);
-                line.erase(0, end_pos + 1);
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
             }
+        } else {
+            size_t end_pos = line.find('"', 1);
+            token = line.substr(1, end_pos - 1);
+            line.erase(0, end_pos);
         }
+
         tokens.push_back(token);
     }
-
-    tokens.push_back(line);
+    if (line.length() > 2)
+        tokens.push_back(line);
     return tokens;
 }
