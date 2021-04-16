@@ -1,9 +1,9 @@
 #ifndef LAKE_SH_CMD_HANDLER_HPP
 #define LAKE_SH_CMD_HANDLER_HPP
 
+#include "cmd.hpp"
 #include "cmd_assembler.hpp"
 #include "shell_context.hpp"
-#include "cmd.hpp"
 #include <memory>
 #include <vector>
 
