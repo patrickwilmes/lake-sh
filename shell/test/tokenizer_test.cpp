@@ -36,8 +36,9 @@ TEST_CASE("lexing piped commands") {
     std::string cmd = "ls -latr | sort";
     auto tokens = lsh::tokenizer::tokenize(cmd);
 
-    REQUIRE(tokens.size() == 3);
+    REQUIRE(tokens.size() == 4);
     REQUIRE(tokens[0] == "ls");
     REQUIRE(tokens[1] == "-latr");
-    REQUIRE(tokens[2] == "sort");
+    REQUIRE(tokens[2] == "|");
+    REQUIRE(tokens[3] == "sort");
 }

@@ -25,8 +25,7 @@ std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
             token = line.substr(1, end_pos - 1);
             line.erase(0, end_pos);
         }
-        if (token != "|")
-            tokens.push_back(token);
+        tokens.push_back(token);
     }
     if (line.length() > 2 || line.length() == origin_len)
         tokens.push_back(line);
