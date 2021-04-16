@@ -4,8 +4,15 @@
 #include <string>
 #include <vector>
 
-namespace lsh::tokenizer {
-    std::vector<std::string> tokenize(std::string &line);
+namespace lsh {
+    class lsh_tokenizer final {
+    public:
+    private:
+    };
+    namespace tokenizer {
+        [[deprecated]]
+        std::vector<std::string> tokenize(std::string &line);
+    }
 }
 
 #endif//LAKE_SH_TOKENIZER_HPP

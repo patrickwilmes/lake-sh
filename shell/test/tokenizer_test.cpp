@@ -5,6 +5,10 @@
 #include "tokenizer.hpp"
 #include <string>
 
+/*
+ * begin legacy tests
+ */
+
 TEST_CASE("lexing a command having an equal sign") {
     std::string cmd = "alias ll=\"ls -latr\"";
     auto tokens = lsh::tokenizer::tokenize(cmd);
