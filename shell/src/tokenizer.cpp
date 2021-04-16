@@ -1,5 +1,6 @@
 #include "tokenizer.hpp"
 #include "utils/utils.hpp"
+#include <assert.h>
 
 std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
     std::vector<std::string> tokens;
@@ -30,4 +31,24 @@ std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
     if (line.length() > 2 || line.length() == origin_len)
         tokens.push_back(line);
     return tokens;
+}
+
+lsh::lsh_tokenizer::lsh_tokenizer(const std::string input): m_input(input) { }
+
+void lsh::lsh_tokenizer::lex() {
+    auto emit_token = [&](const char single_char_token) {
+        token_t token = {
+            .token = IDENTIFIER,
+        };
+        m_tokens.push_back(token);
+    };
+}
+
+char lsh::lsh_tokenizer::consume() {
+    return 0;
+}
+
+char lsh::lsh_tokenizer::peek() {
+    assert(input_idx < m_input.length());
+    return m_input[input_idx + 1];
 }
