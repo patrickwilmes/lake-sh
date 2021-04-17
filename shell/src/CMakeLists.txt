@@ -31,6 +31,9 @@ set(SRC
 
         logger.cpp
         logger.hpp
+
+        executor.cpp
+        executor.hpp
         )
 
 set(CLION_SRC

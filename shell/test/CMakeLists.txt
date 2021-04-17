@@ -31,6 +31,9 @@ set(SRC
         ${PROJECT_SOURCE_DIR}/shell/src/cmd.hpp
         ${PROJECT_SOURCE_DIR}/shell/src/cmd.cpp
 
+        ${PROJECT_SOURCE_DIR}/shell/src/executor.hpp
+        ${PROJECT_SOURCE_DIR}/shell/src/executor.cpp
+
         ${PROJECT_SOURCE_DIR}/shell/src/logger.cpp
         ${PROJECT_SOURCE_DIR}/shell/src/logger.hpp
 
