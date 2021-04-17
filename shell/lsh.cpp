@@ -16,12 +16,7 @@ constexpr int ENTER_KEY = 10;
 
 std::vector<std::shared_ptr<lsh::cmd::command>> process_input(std::string &line);
 
-lake_shell::lake_shell() : m_win(initscr()), m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)) {
-    clear();
-    cbreak();
-    noecho();
-    keypad(stdscr, true);
-
+lake_shell::lake_shell() : m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)) {
     m_shell_context->refresh();
 }
 
@@ -32,59 +27,15 @@ lake_shell::~lake_shell() {
 void lake_shell::run() {
     display_prompt();
     while (m_running) {
-        char *inbuf = (char *) malloc(sizeof(char) * 2048);
+        //        char *inbuf = (char *) malloc(sizeof(char) * 2048);
         bool collecting_input = true;
         bool direct_command = false;
-        int x, y;
-        getyx(m_win, y, x);
-        while (collecting_input) {
-            int c = getch();
-            switch (c) {
-                case KEY_UP: {
-                    std::string h_elem = m_history.next();
-                    mvaddstr(y, x, h_elem.c_str());
-                } break;
-                case KEY_LEFT: {
-                    int cx, cy;
-                    getyx(m_win, cy, cx);
-                    cx--;
-                    move(cy, cx);
-                } break;
-                case KEY_RIGHT: {
-                    int cx, cy;
-                    getyx(m_win, cy, cx);
-                    cx++;
-                    move(cy, cx);
-                } break;
-                case KEY_ENTER:
-                case ENTER_KEY:
-                    mvwinstr(m_win, y, x, inbuf);
-                    collecting_input = false;
-                    break;
-                case KEY_DC: {
-                    int cx, cy;
-                    getyx(m_win, cy, cx);
-                    mvdelch(cy, cx);
-                } break;
-                case CTRL_L_KEY: {
-                    collecting_input = false;
-                    direct_command = true;
-                    clear();
-                } break;
-                case KEY_BACKSPACE:
-                case 127:
-                    int cx, cy;
-                    getyx(m_win, cy, cx);
-                    mvdelch(cy, cx - 1);
-                    break;
-                default:
-                    echochar(c);
-                    break;
-            }
-        }
-        std::string command_input(inbuf);
+        //        int x, y;
+        //        getyx(m_win, y, x);
+        auto input = m_term.get_input();
+        std::string command_input(input.input);
         trim(command_input);
-        free(inbuf);
+        //        free(inbuf);
         echo();
         refresh();
         if (command_input == EXIT_KWD) {
@@ -110,29 +61,17 @@ void lake_shell::run() {
                     }
                     m_history.add(command_input);
                 } catch (invalid_command_exception &e) {
-                    int cy, cx;
-                    getyx(m_win, cy, cx);
-                    cy++;
-                    mvaddstr(cy, 0, "invalid command call: ");
-                    addstr(e.what());
+                    m_term.print_next_line("invalid command class: ");
+                    m_term.print(e.what());
                 } catch (command_not_found_exception &e) {
-                    int cy, cx;
-                    getyx(m_win, cy, cx);
-                    cy++;
-                    mvaddstr(cy, 0, "command not found: ");
-                    addstr(e.what());
+                    m_term.print_next_line("command not found: ");
+                    m_term.print(e.what())
                 } catch (std::runtime_error &e) {
-                    int cy, cx;
-                    getyx(m_win, cy, cx);
-                    cy++;
-                    mvaddstr(cy, 0, "command not found: ");
-                    addstr(e.what());
+                    m_term.print_next_line("command not found: ");
+                    m_term.print(e.what());
                 } catch (std::exception &e) {
-                    int cy, cx;
-                    getyx(m_win, cy, cx);
-                    cy++;
-                    mvaddstr(cy, 0, "command not found: ");
-                    addstr(e.what());
+                    m_term.print_next_line("error: ");
+                    m_term.print(e.what());
                 }
             }
         }

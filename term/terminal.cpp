@@ -80,3 +80,10 @@ term::input_t term::terminal::get_input() {
 term::terminal::~terminal() {
     endwin();
 }
+
+void term::terminal::print_next_line(const std::string &msg) {
+    int y, x;
+    getyx(m_win, y, x);
+    y++;
+    mvaddstr(y, x, msg.c_str());
+}

@@ -22,6 +22,7 @@ namespace term {
         ~terminal();
         void print(const std::string &msg);
         void println(const std::string &msg);
+        void print_next_line(const std::string &msg);
         input_t get_input();
     private:
         static constexpr uint32_t MAX_INPUT_LEN = 2048;
