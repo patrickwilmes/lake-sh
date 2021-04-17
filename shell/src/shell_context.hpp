@@ -18,7 +18,9 @@ namespace lsh {
         void add_alias(std::string name, std::string origin);
         bool alias_exists(std::string &name);
         std::string get_origin_of_alias(std::string &name);
+        void load_shell_profile();
     private:
+        static const std::string LAKE_SHELL_PROFILE;
         bool m_is_git = false;
         std::string m_current_wd;
         std::string m_user_home;
