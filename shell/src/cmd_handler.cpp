@@ -2,6 +2,7 @@
 #include "shell_context.hpp"
 #include "usr.hpp"
 #include "executor.hpp"
+#include "logger.hpp"
 #include <iostream>
 #include <string>
 #include <sys/wait.h>
@@ -63,6 +64,7 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
         }
     } else if (cmd_name == ALIAS) {
         cmd->ensure_has_args(2);
+        lsh::dbg("printing shit", args[0], args[1]);
         m_shell_context->add_alias(args[0], args[1]);
         return "";
     } else if (cmd_name == EXPORT) {

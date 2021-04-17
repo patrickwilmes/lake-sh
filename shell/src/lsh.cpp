@@ -16,7 +16,7 @@ constexpr int ENTER_KEY = 10;
 
 std::vector<std::shared_ptr<lsh::cmd::command>> process_input(std::string &line);
 
-lake_shell::lake_shell() : m_win(initscr()), m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)), m_logger(m_win) {
+lake_shell::lake_shell() : m_win(initscr()), m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)) {
     clear();
     cbreak();
     noecho();

@@ -1,17 +1,31 @@
 #ifndef LAKE_SH_LOGGER_HPP
 #define LAKE_SH_LOGGER_HPP
 
-#include <string>
+#include <iostream>
 #include <ncurses.h>
+#include <string>
 
 namespace lsh {
-    class logger final {
-    public:
-        explicit logger(WINDOW *win);
-        void log_info(std::string msg);
-    private:
-        WINDOW *m_win;
-    };
-}
+    template<typename T>
+    void dbg(T t) {
+#ifdef SHELL_DEBUG
+        std::cout << t << std::endl;
+#endif
+    }
+
+    template<typename T, typename Arg>
+    void dbg(T t, Arg a) {
+#ifdef SHELL_DEBUG
+        std::cout << t << " " << a << std::endl;
+#endif
+    }
+
+    template<typename T, typename ArgOne, typename ArgTwo>
+    void dbg(T t, ArgOne a, ArgTwo b) {
+#ifdef SHELL_DEBUG
+        std::cout << t << " " << a << " " << b << std::endl;
+#endif
+    }
+}// namespace lsh
 
 #endif//LAKE_SH_LOGGER_HPP
