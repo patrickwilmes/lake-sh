@@ -5,6 +5,7 @@
 #include "history.hpp"
 #include "shell_context.hpp"
 #include "cmd_handler.hpp"
+#include <terminal.hpp>
 #include <ncurses.h>
 #include <memory>
 
@@ -26,6 +27,7 @@ namespace lsh {
         std::shared_ptr<shell_context> m_shell_context;
         history m_history;
         command_handler m_cmd_handler;
+        term::terminal m_term;
     };
 }// namespace lsh
 

@@ -1,5 +1,5 @@
+#include "../shell/cmd_assembler.hpp"
 #include "catch.hpp"
-#include "cmd_assembler.hpp"
 #include <string>
 #include <vector>
 

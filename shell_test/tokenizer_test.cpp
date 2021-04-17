@@ -1,8 +1,8 @@
 #ifndef CATCH_CONFIG_MAIN
 #define CATCH_CONFIG_MAIN
 #endif
+#include "../shell/tokenizer.hpp"
 #include "catch.hpp"
-#include "tokenizer.hpp"
 #include <string>
 
 TEST_CASE("lexing a command having an equal sign") {
