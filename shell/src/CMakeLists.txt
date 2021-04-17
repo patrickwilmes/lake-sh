@@ -37,6 +37,7 @@ set(CLION_SRC
         clion_launch.cpp
         )
 
+
 add_executable(lsh main.cpp ${SRC} )
 target_link_libraries(lsh ncurses)
 target_compile_definitions(lsh PRIVATE SHELL_DEBUG)
