@@ -3,6 +3,8 @@
 #include "usr.hpp"
 #include "executor.hpp"
 #include "logger.hpp"
+#include "tokenizer.hpp"
+#include "cmd_assembler.hpp"
 #include <iostream>
 #include <string>
 #include <sys/wait.h>
@@ -25,7 +27,9 @@ std::string lsh::cmd::command_handler::handle_commands(std::vector<std::shared_p
 
     std::vector<std::shared_ptr<lsh::cmd::command>> extern_cmds;
     std::copy_if(cmds.begin(), cmds.end(), std::back_inserter(extern_cmds), copy_if_is_external_cmd);
-    return handle_extern_cmds(extern_cmds);
+    validate_external_commands(cmds);
+    auto resolved_cmds = resolve_aliased_commands(cmds);
+    return handle_extern_cmds(resolved_cmds);
 }
 
 lsh::cmd::command_handler::command_handler(std::shared_ptr<shell_context> &shell_context): m_shell_context(shell_context) {
@@ -93,7 +97,6 @@ std::string lsh::cmd::command_handler::handle_own_cmd(const std::shared_ptr<lsh:
 }
 
 std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std::shared_ptr<lsh::cmd::command>> &cmds) {
-    validate_external_commands(cmds);
     if (cmds.size() == 1) {
         int fd[2];
         auto cmd_to_exec = cmds.front();
@@ -112,12 +115,13 @@ std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std:
         }
         args[i] = NULL;
         if (pipe(fd) == -1) {
-            return "";
+            throw std::runtime_error("failed to initialize pipe!");
         }
         pid_t p;
         pid_t pid = fork();
         if (pid < 0) {
             std::cerr << "fork failed" << std::endl;
+            throw std::runtime_error("failed to fork process");
         } else if (pid == 0) {
             if (is_not_sync_command(cmd_to_exec)) {
                 close(fd[0]);
@@ -126,7 +130,7 @@ std::string lsh::cmd::command_handler::handle_extern_cmds(const std::vector<std:
                 close(fd[1]);
             }
             execvp(c, args);
-            std::cerr << "exec failed" << std::endl;
+            throw std::runtime_error("failed to execute command!");
         } else {
             do {
                 p = wait(&child_status);
@@ -170,7 +174,7 @@ void lsh::cmd::command_handler::index_path() {
     std::string path(getenv("PATH"));
     const std::string delim = ":";
 
-    size_t pos = 0;
+    size_t pos;
     std::string token;
     while ((pos = path.find(delim)) != std::string::npos) {
         token = path.substr(0, pos);
@@ -178,4 +182,22 @@ void lsh::cmd::command_handler::index_path() {
             m_available_commands.push_back(entry.path().filename().string());
         path.erase(0, pos + delim.length());
     }
+}
+
+std::vector<std::shared_ptr<lsh::cmd::command>> cmd::command_handler::resolve_aliased_commands(std::vector<std::shared_ptr<lsh::cmd::command>> cmds) {
+    std::vector<std::shared_ptr<lsh::cmd::command>> resolved_cmds;
+    for (auto &cmd : cmds) {
+        auto cmd_name = cmd->get_name();
+        if (m_shell_context->alias_exists(cmd_name)) {
+            auto assoc_cmd = m_shell_context->get_origin_of_alias(cmd_name);
+            auto tokens = lsh::tokenizer::tokenize(assoc_cmd);
+            auto result = lsh::assembler::assemble_commands(tokens);
+            for (auto &r : result) {
+                resolved_cmds.push_back(r);
+            }
+        } else {
+            resolved_cmds.push_back(cmd);
+        }
+    }
+    return resolved_cmds;
 }

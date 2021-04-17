@@ -121,6 +121,18 @@ void lake_shell::run() {
                     cy++;
                     mvaddstr(cy, 0, "command not found: ");
                     addstr(e.what());
+                } catch (std::runtime_error &e) {
+                    int cy, cx;
+                    getyx(m_win, cy, cx);
+                    cy++;
+                    mvaddstr(cy, 0, "command not found: ");
+                    addstr(e.what());
+                } catch (std::exception &e) {
+                    int cy, cx;
+                    getyx(m_win, cy, cx);
+                    cy++;
+                    mvaddstr(cy, 0, "command not found: ");
+                    addstr(e.what());
                 }
             }
         }

@@ -24,6 +24,7 @@ namespace lsh::cmd {
         void validate_external_commands(std::vector<std::shared_ptr<lsh::cmd::command>> cmds);
 
         void index_path();
+        std::vector<std::shared_ptr<lsh::cmd::command>> resolve_aliased_commands(std::vector<std::shared_ptr<lsh::cmd::command>> cmds);
     private:
         std::vector<std::string> m_available_commands;
         std::shared_ptr<shell_context> m_shell_context;

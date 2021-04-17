@@ -1,5 +1,4 @@
 #include "executor.hpp"
-#include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
 #include <filesystem>
@@ -25,7 +24,9 @@ int lsh::piped_executor::spawn_command(std::shared_ptr<lsh::cmd::command> cmd, i
     int fd[2];
     pipe(fd);
 
-    pid = fork();
+    if ((pid = fork()) < 0) {
+        throw std::runtime_error("failed to fork process!");
+    }
 
     if (pid == 0) {
         if (is_first) {
@@ -46,9 +47,9 @@ int lsh::piped_executor::spawn_command(std::shared_ptr<lsh::cmd::command> cmd, i
             args[i] = const_cast<char *>(arg.c_str());
             i++;
         }
-        args[i] = NULL;
+        args[i] = nullptr;
         if (execvp(cmd_name.c_str(), args) == -1) {
-            exit(-1);
+            throw std::runtime_error("failed to execute command!");
         }
     }
 
