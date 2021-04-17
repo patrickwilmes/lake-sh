@@ -8,6 +8,7 @@
 namespace lsh {
     class shell_context final {
     public:
+        shell_context();
         void refresh();
         std::string get_working_dir();
         std::string get_user_home();

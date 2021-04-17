@@ -7,7 +7,6 @@
 #include <utility>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 
 using namespace lsh;
 using namespace lsh::tokenizer;
@@ -23,7 +22,6 @@ void lsh::shell_context::refresh() {
     m_current_dirs = get_dirs_for(m_current_wd);
 
     m_is_git = std::filesystem::exists(".git");
-    load_shell_profile();
 }
 
 std::string lsh::shell_context::get_working_dir() {
@@ -47,7 +45,6 @@ bool lsh::shell_context::is_git_dir() {
 }
 
 void lsh::shell_context::add_alias(std::string name, std::string origin) {
-    printf("adding alias %s -- %s", name.c_str(), origin.c_str());
     m_alias_container.add(std::move(name), std::move(origin));
 }
 
@@ -79,4 +76,8 @@ void lsh::shell_context::load_shell_profile() {
             }
         }
     }
+}
+
+shell_context::shell_context() {
+    load_shell_profile();
 }
