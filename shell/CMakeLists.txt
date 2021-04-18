@@ -38,4 +38,4 @@ set(SRC
 
 add_executable(lsh main.cpp ${SRC} )
 target_link_libraries(lsh ncurses term)
-target_include_directories(lsh PRIVATE ${PROJECT_SOURCE_DIR}/term)
+target_include_directories(lsh PRIVATE ../lib/term)
