@@ -1,5 +1,5 @@
 #include "Terminal.hpp"
-#include <iostream>
+#include <cstring>
 
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
@@ -26,7 +26,7 @@ Term::Input Term::Terminal::get_input() {
     Keys pressed_key = NONE;
     int x, y;
     getyx(m_win, y, x);
-    echo();
+    noecho();
     refresh();
     while (collecting_input) {
         int c = getch();
@@ -60,7 +60,6 @@ Term::Input Term::Terminal::get_input() {
             } break;
             case CTRL_L_KEY: {
                 collecting_input = false;
-                //                direct_command = true;
                 input_buf = (char *) calloc(MAX_INPUT_LEN, sizeof(char));
                 clear();
             } break;
@@ -75,6 +74,7 @@ Term::Input Term::Terminal::get_input() {
                 break;
         }
     }
+    echo();
     std::string input(input_buf);
     free(input_buf);
     return {.input = input, .key = pressed_key};
@@ -88,7 +88,7 @@ void Term::Terminal::print_next_line(const std::string &msg) {
     int y, x;
     getyx(m_win, y, x);
     y++;
-    mvaddstr(y, x, msg.c_str());
+    mvaddstr(y, 0, msg.c_str());
 }
 
 void Term::Terminal::display_prompt(const std::string &msg)

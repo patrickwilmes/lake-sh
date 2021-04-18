@@ -7,7 +7,6 @@
 #include "ShellContext.hpp"
 #include <Terminal.hpp>
 #include <memory>
-#include <ncurses.h>
 
 namespace LakeShell {
     using namespace LakeShell::Cmd;
@@ -22,7 +21,6 @@ namespace LakeShell {
         void display_prompt();
 
     private:
-        WINDOW *m_win = nullptr;
         bool m_running = true;
         std::shared_ptr<ShellContext> m_shell_context;
         History m_history;

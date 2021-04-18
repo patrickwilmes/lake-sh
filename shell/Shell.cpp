@@ -36,7 +36,6 @@ void Shell::run()
 {
     display_prompt();
     while (m_running) {
-        bool direct_command = false;
         auto input = m_term.get_input();
         std::string command_input(input.input);
         trim(command_input);
@@ -44,7 +43,7 @@ void Shell::run()
         refresh();
         if (command_input == EXIT_KWD) {
             m_running = false;
-        } else if (!direct_command) {
+        } else {
             if (!command_input.empty()) {
                 auto cmds = process_input(command_input);
                 try {
@@ -53,13 +52,9 @@ void Shell::run()
                     if (!render_data.empty()) {
                         std::stringstream ss(render_data);
                         std::string target;
-                        int cy, cx;
-                        getyx(m_win, cy, cx);
-                        cy++;
                         while (std::getline(ss, target, '\n')) {
                             if (!target.empty()) {
-                                mvaddstr(cy, 0, target.c_str());
-                                cy++;
+                                m_term.print_next_line(target);
                             }
                         }
                     }
