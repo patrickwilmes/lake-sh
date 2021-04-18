@@ -1,5 +1,4 @@
 #include "Terminal.hpp"
-#include <cstring>
 
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
