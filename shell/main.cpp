@@ -1,8 +1,8 @@
-#include "lsh.hpp"
+#include "Shell.hpp"
 #include <cstdlib>
 
 int main() {
-    lsh::lake_shell shell;
+    LakeShell::Shell shell;
     shell.run();
     return EXIT_SUCCESS;
 }

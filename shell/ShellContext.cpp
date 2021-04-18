@@ -1,62 +1,62 @@
-#include "shell_context.hpp"
+#include "ShellContext.hpp"
 
-#include "usr.hpp"
-#include "utils/utils.hpp"
-#include "tokenizer.hpp"
-#include "cmd_assembler.hpp"
-#include <utility>
+#include "CmdAssembler.hpp"
+#include "Tokenizer.hpp"
+#include "User.hpp"
+#include "utils/Utils.hpp"
 #include <filesystem>
 #include <fstream>
+#include <utility>
 
-using namespace lsh;
-using namespace lsh::tokenizer;
-using namespace lsh::assembler;
+using namespace LakeShell;
+using namespace LakeShell::Tokenizer;
+using namespace LakeShell::Assembler;
 
-const std::string shell_context::LAKE_SHELL_PROFILE = ".lakesh";
+const std::string ShellContext::LAKE_SHELL_PROFILE = ".lakesh";
 
-void lsh::shell_context::refresh() {
-    m_current_wd = lsh::usr::current_wd();
-    m_user_home = lsh::usr::usr_home_dir();
-    m_username = lsh::usr::get_user_name();
+void LakeShell::ShellContext::refresh() {
+    m_current_wd = LakeShell::User::current_wd();
+    m_user_home = LakeShell::User::usr_home_dir();
+    m_username = LakeShell::User::get_user_name();
 
     m_current_dirs = get_dirs_for(m_current_wd);
 
     m_is_git = std::filesystem::exists(".git");
 }
 
-std::string lsh::shell_context::get_working_dir() {
+std::string LakeShell::ShellContext::get_working_dir() {
     return m_current_wd;
 }
 
-std::string lsh::shell_context::get_user_home() {
+std::string LakeShell::ShellContext::get_user_home() {
     return m_user_home;
 }
 
-std::string lsh::shell_context::get_username() {
+std::string LakeShell::ShellContext::get_username() {
     return m_username;
 }
 
-std::string lsh::shell_context::get_relative_working_dir() {
+std::string LakeShell::ShellContext::get_relative_working_dir() {
     return std::string();
 }
 
-bool lsh::shell_context::is_git_dir() {
+bool LakeShell::ShellContext::is_git_dir() {
     return m_is_git;
 }
 
-void lsh::shell_context::add_alias(std::string name, std::string origin) {
+void LakeShell::ShellContext::add_alias(std::string name, std::string origin) {
     m_alias_container.add(std::move(name), std::move(origin));
 }
 
-bool lsh::shell_context::alias_exists(std::string &name) {
+bool LakeShell::ShellContext::alias_exists(std::string &name) {
     return m_alias_container.exists(name);
 }
 
-std::string lsh::shell_context::get_origin_of_alias(std::string &name) {
+std::string LakeShell::ShellContext::get_origin_of_alias(std::string &name) {
     return m_alias_container.get_origin(name);
 }
 
-void lsh::shell_context::load_shell_profile() {
+void LakeShell::ShellContext::load_shell_profile() {
     auto user_home = get_user_home();
     auto profile = user_home + "/" + LAKE_SHELL_PROFILE;
     if (!std::filesystem::exists(profile)) {
@@ -78,11 +78,11 @@ void lsh::shell_context::load_shell_profile() {
     }
 }
 
-shell_context::shell_context() {
+ShellContext::ShellContext() {
     load_shell_profile();
 }
 
-std::vector<std::string> shell_context::get_path_completions(const std::string &partial_path) {
+std::vector<std::string> ShellContext::get_path_completions(const std::string &partial_path) {
     auto wd = get_working_dir();
     std::vector<std::string> path_completions;
     for (auto &path : m_current_dirs) {

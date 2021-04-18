@@ -4,8 +4,8 @@
 #include <ncurses.h>
 #include <string>
 
-namespace term {
-    enum keys {
+namespace Term {
+    enum Keys {
         NONE,
         KEY_ARROW_UP,
         KEY_CTRL_L
@@ -13,21 +13,21 @@ namespace term {
 
     typedef struct {
         std::string input;
-        keys key;
-    } input_t;
+        Keys key;
+    } Input;
 
-    class terminal final {
+    class Terminal final {
     public:
-        terminal();
-        ~terminal();
+        Terminal();
+        ~Terminal();
         void print(const std::string &msg);
         void println(const std::string &msg);
         void print_next_line(const std::string &msg);
-        input_t get_input();
+        Input get_input();
     private:
         static constexpr uint32_t MAX_INPUT_LEN = 2048;
         WINDOW *m_win;
     };
-}// namespace term
+}// namespace Term
 
 #endif//LAKE_SH_TERMINAL_HPP

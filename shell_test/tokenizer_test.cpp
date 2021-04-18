@@ -1,7 +1,7 @@
 #ifndef CATCH_CONFIG_MAIN
 #define CATCH_CONFIG_MAIN
 #endif
-#include "../shell/tokenizer.hpp"
+#include "../shell/Tokenizer.hpp"
 #include "catch.hpp"
 #include <string>
 

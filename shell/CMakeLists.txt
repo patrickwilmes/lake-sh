@@ -1,39 +1,39 @@
 set(SRC
-        lsh.cpp
-        lsh.hpp
+        Shell.cpp
+        Shell.hpp
 
-        tokenizer.cpp
-        tokenizer.hpp
+        Tokenizer.cpp
+        Tokenizer.hpp
 
-        usr.cpp
-        usr.hpp
+        User.cpp
+        User.hpp
 
-        cmd_assembler.cpp
-        cmd_assembler.hpp
+        CmdAssembler.cpp
+        CmdAssembler.hpp
 
-        cmd_handler.cpp
-        cmd_handler.hpp
+        CmdHandler.cpp
+        CmdHandler.hpp
 
-        utils/utils.cpp
-        utils/utils.hpp
+        utils/Utils.cpp
+        utils/Utils.hpp
 
-        history.cpp
-        history.hpp
+        History.cpp
+        History.hpp
 
-        shell_context.cpp
-        shell_context.hpp
+        ShellContext.cpp
+        ShellContext.hpp
 
-        alias.cpp
-        alias.hpp
+        Alias.cpp
+        Alias.hpp
 
-        cmd.hpp
-        cmd.cpp
+        Cmd.hpp
+        Cmd.cpp
 
-        logger.cpp
-        logger.hpp
+        Logger.cpp
+        Logger.hpp
 
-        executor.cpp
-        executor.hpp
+        Executor.cpp
+        Executor.hpp
         )
 
 add_executable(lsh main.cpp ${SRC} )

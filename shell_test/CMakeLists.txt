@@ -1,41 +1,41 @@
 set(SRC
         catch.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/tokenizer.cpp
-        ${PROJECT_SOURCE_DIR}/shell/tokenizer.hpp
+        ${PROJECT_SOURCE_DIR}/shell/Tokenizer.cpp
+        ${PROJECT_SOURCE_DIR}/shell/Tokenizer.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/cmd_assembler.cpp
-        ${PROJECT_SOURCE_DIR}/shell/cmd_assembler.hpp
+        ${PROJECT_SOURCE_DIR}/shell/CmdAssembler.cpp
+        ${PROJECT_SOURCE_DIR}/shell/CmdAssembler.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/lsh.cpp
-        ${PROJECT_SOURCE_DIR}/shell/lsh.hpp
+        ${PROJECT_SOURCE_DIR}/shell/Shell.cpp
+        ${PROJECT_SOURCE_DIR}/shell/Shell.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/usr.cpp
-        ${PROJECT_SOURCE_DIR}/shell/usr.hpp
+        ${PROJECT_SOURCE_DIR}/shell/User.cpp
+        ${PROJECT_SOURCE_DIR}/shell/User.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/cmd_handler.cpp
-        ${PROJECT_SOURCE_DIR}/shell/cmd_handler.hpp
+        ${PROJECT_SOURCE_DIR}/shell/CmdHandler.cpp
+        ${PROJECT_SOURCE_DIR}/shell/CmdHandler.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/utils/utils.cpp
-        ${PROJECT_SOURCE_DIR}/shell/utils/utils.hpp
+        ${PROJECT_SOURCE_DIR}/shell/utils/Utils.cpp
+        ${PROJECT_SOURCE_DIR}/shell/utils/Utils.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/history.cpp
-        ${PROJECT_SOURCE_DIR}/shell/history.hpp
+        ${PROJECT_SOURCE_DIR}/shell/History.cpp
+        ${PROJECT_SOURCE_DIR}/shell/History.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/shell_context.cpp
-        ${PROJECT_SOURCE_DIR}/shell/shell_context.hpp
+        ${PROJECT_SOURCE_DIR}/shell/ShellContext.cpp
+        ${PROJECT_SOURCE_DIR}/shell/ShellContext.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/alias.cpp
-        ${PROJECT_SOURCE_DIR}/shell/alias.hpp
+        ${PROJECT_SOURCE_DIR}/shell/Alias.cpp
+        ${PROJECT_SOURCE_DIR}/shell/Alias.hpp
 
-        ${PROJECT_SOURCE_DIR}/shell/cmd.hpp
-        ${PROJECT_SOURCE_DIR}/shell/cmd.cpp
+        ${PROJECT_SOURCE_DIR}/shell/Cmd.hpp
+        ${PROJECT_SOURCE_DIR}/shell/Cmd.cpp
 
-        ${PROJECT_SOURCE_DIR}/shell/executor.hpp
-        ${PROJECT_SOURCE_DIR}/shell/executor.cpp
+        ${PROJECT_SOURCE_DIR}/shell/Executor.hpp
+        ${PROJECT_SOURCE_DIR}/shell/Executor.cpp
 
-        ${PROJECT_SOURCE_DIR}/shell/logger.cpp
-        ${PROJECT_SOURCE_DIR}/shell/logger.hpp
+        ${PROJECT_SOURCE_DIR}/shell/Logger.cpp
+        ${PROJECT_SOURCE_DIR}/shell/Logger.hpp
 
         tokenizer_test.cpp
         cmd_assembler_test.cpp

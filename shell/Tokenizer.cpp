@@ -1,7 +1,7 @@
-#include "tokenizer.hpp"
-#include "utils/utils.hpp"
+#include "Tokenizer.hpp"
+#include "utils/Utils.hpp"
 
-std::vector<std::string> lsh::tokenizer::tokenize(std::string &line) {
+std::vector<std::string> LakeShell::Tokenizer::tokenize(std::string &line) {
     std::vector<std::string> tokens;
     const uint32_t origin_len = line.length();
     const std::string std_delim = " ";

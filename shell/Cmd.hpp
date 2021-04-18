@@ -6,10 +6,10 @@
 #include <string>
 #include <vector>
 
-namespace lsh::cmd {
-    class invalid_command_exception : public std::exception {
+namespace LakeShell::Cmd {
+    class InvalidCommandException : public std::exception {
     public:
-        explicit invalid_command_exception(const char * name): std::exception(), m_name(name) {}
+        explicit InvalidCommandException(const char * name): std::exception(), m_name(name) {}
         [[nodiscard]] const char * what() const noexcept override {
             return m_name;
         }
@@ -17,9 +17,9 @@ namespace lsh::cmd {
         const char *m_name;
     };
 
-    class command_not_found_exception : public std::exception {
+    class CommandNotFoundException : public std::exception {
     public:
-        explicit command_not_found_exception(const char * name): std::exception(), m_name(name) {}
+        explicit CommandNotFoundException(const char * name): std::exception(), m_name(name) {}
         [[nodiscard]] const char * what() const noexcept override {
             return m_name;
         }
@@ -27,9 +27,9 @@ namespace lsh::cmd {
         const char *m_name;
     };
 
-    class command final {
+    class Command final {
     public:
-        explicit command(std::string name);
+        explicit Command(std::string name);
         void add_arg(const std::string& arg);
         void ensure_has_args(const uint32_t expected_number);
         std::string get_name();

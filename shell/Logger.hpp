@@ -5,7 +5,7 @@
 #include <ncurses.h>
 #include <string>
 
-namespace lsh {
+namespace LakeShell {
     template<typename T>
     void dbg(T t) {
 #ifdef SHELL_DEBUG
@@ -26,6 +26,6 @@ namespace lsh {
         std::cout << t << " " << a << " " << b << std::endl;
 #endif
     }
-}// namespace lsh
+}// namespace LakeShell
 
 #endif//LAKE_SH_LOGGER_HPP

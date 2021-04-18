@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace lsh::tokenizer {
+namespace LakeShell::Tokenizer {
     std::vector<std::string> tokenize(std::string &line);
 }
 

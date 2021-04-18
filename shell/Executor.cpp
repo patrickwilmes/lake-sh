@@ -1,11 +1,11 @@
-#include "executor.hpp"
+#include "Executor.hpp"
+#include <filesystem>
 #include <unistd.h>
 #include <utility>
-#include <filesystem>
 
-lsh::piped_executor::piped_executor(std::vector<std::shared_ptr<lsh::cmd::command>> cmds) : m_cmds(std::move(cmds)) {}
+LakeShell::PipedExecutor::PipedExecutor(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds) : m_cmds(std::move(cmds)) {}
 
-std::string lsh::piped_executor::execute() {
+std::string LakeShell::PipedExecutor::execute() {
     int input = 0;
     int num_cmds = m_cmds.size();
     for (int i = 0; i < num_cmds; i++) {
@@ -19,7 +19,7 @@ std::string lsh::piped_executor::execute() {
     return data;
 }
 
-int lsh::piped_executor::spawn_command(std::shared_ptr<lsh::cmd::command> cmd, int input, bool is_first, bool is_last) {
+int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Command> cmd, int input, bool is_first, bool is_last) {
     int pid;
     int fd[2];
     pipe(fd);
@@ -49,7 +49,7 @@ int lsh::piped_executor::spawn_command(std::shared_ptr<lsh::cmd::command> cmd, i
         }
         args[i] = nullptr;
         if (execvp(cmd_name.c_str(), args) == -1) {
-            throw std::runtime_error("failed to execute command!");
+            throw std::runtime_error("failed to execute Command!");
         }
     }
 

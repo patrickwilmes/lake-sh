@@ -4,8 +4,8 @@
 #include <string>
 #include <map>
 
-namespace lsh {
-    class alias_container final {
+namespace LakeShell {
+    class AliasContainer final {
     public:
         void add(std::string name, std::string origin);
         bool exists(std::string &name);

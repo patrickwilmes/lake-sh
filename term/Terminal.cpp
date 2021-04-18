@@ -1,28 +1,28 @@
-#include "terminal.hpp"
+#include "Terminal.hpp"
 
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
 
-term::terminal::terminal() : m_win(initscr()) {
+Term::Terminal::Terminal() : m_win(initscr()) {
     clear();
     cbreak();
     noecho();
     keypad(stdscr, true);
 }
 
-void term::terminal::print(const std::string &msg) {
+void Term::Terminal::print(const std::string &msg) {
     addstr(msg.c_str());
 }
 
-void term::terminal::println(const std::string &msg) {
+void Term::Terminal::println(const std::string &msg) {
     addstr(msg.c_str());
     waddch(m_win, '\n');
 }
 
-term::input_t term::terminal::get_input() {
+Term::Input Term::Terminal::get_input() {
     char *input_buf = (char *) calloc(MAX_INPUT_LEN, sizeof(char));
     bool collecting_input = true;
-    keys pressed_key = NONE;
+    Keys pressed_key = NONE;
     int x, y;
     getyx(m_win, y, x);
     while (collecting_input) {
@@ -77,11 +77,11 @@ term::input_t term::terminal::get_input() {
     return {.input = input, .key = pressed_key};
 }
 
-term::terminal::~terminal() {
+Term::Terminal::~Terminal() {
     endwin();
 }
 
-void term::terminal::print_next_line(const std::string &msg) {
+void Term::Terminal::print_next_line(const std::string &msg) {
     int y, x;
     getyx(m_win, y, x);
     y++;

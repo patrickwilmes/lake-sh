@@ -1,6 +1,6 @@
 set(SRC
-        terminal.cpp
-        terminal.hpp
+        Terminal.cpp
+        Terminal.hpp
 )
 
 add_library(term ${SRC})

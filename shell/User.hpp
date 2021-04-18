@@ -1,9 +1,9 @@
-#ifndef LAKE_SH_USR_HPP
-#define LAKE_SH_USR_HPP
+#ifndef LAKE_SH_USER_HPP
+#define LAKE_SH_USER_HPP
 
 #include <string>
 
-namespace lsh::usr {
+namespace LakeShell::User {
 
     constexpr int MAX_USERNAME_LEN = 32;
 
@@ -14,4 +14,4 @@ namespace lsh::usr {
     std::string usr_home_dir();
 }
 
-#endif//LAKE_SH_USR_HPP
+#endif //LAKE_SH_USER_HPP

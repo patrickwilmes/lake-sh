@@ -1,30 +1,30 @@
-#include "lsh.hpp"
-#include "cmd.hpp"
-#include "cmd_assembler.hpp"
-#include "cmd_handler.hpp"
-#include "tokenizer.hpp"
-#include "utils/utils.hpp"
+#include "Shell.hpp"
+#include "Cmd.hpp"
+#include "CmdAssembler.hpp"
+#include "CmdHandler.hpp"
+#include "Tokenizer.hpp"
+#include "utils/Utils.hpp"
 #include <memory>
 #include <string>
 #include <vector>
 
-using namespace lsh;
+using namespace LakeShell;
 
 static const std::string EXIT_KWD = "exit";
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
 
-std::vector<std::shared_ptr<lsh::cmd::command>> process_input(std::string &line);
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string &line);
 
-lake_shell::lake_shell() : m_shell_context(std::make_shared<shell_context>()), m_history(history(256)), m_cmd_handler(lsh::cmd::command_handler(m_shell_context)) {
+Shell::Shell() : m_shell_context(std::make_shared<ShellContext>()), m_history(History(256)), m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context)) {
     m_shell_context->refresh();
 }
 
-lake_shell::~lake_shell() {
+Shell::~Shell() {
     endwin();
 }
 
-void lake_shell::run() {
+void Shell::run() {
     display_prompt();
     while (m_running) {
         //        char *inbuf = (char *) malloc(sizeof(char) * 2048);
@@ -60,14 +60,14 @@ void lake_shell::run() {
                         }
                     }
                     m_history.add(command_input);
-                } catch (invalid_command_exception &e) {
-                    m_term.print_next_line("invalid command class: ");
+                } catch (InvalidCommandException&e) {
+                    m_term.print_next_line("invalid Command class: ");
                     m_term.print(e.what());
-                } catch (command_not_found_exception &e) {
-                    m_term.print_next_line("command not found: ");
-                    m_term.print(e.what())
+                } catch (CommandNotFoundException&e) {
+                    m_term.print_next_line("Command not found: ");
+                    m_term.print(e.what());
                 } catch (std::runtime_error &e) {
-                    m_term.print_next_line("command not found: ");
+                    m_term.print_next_line("Command not found: ");
                     m_term.print(e.what());
                 } catch (std::exception &e) {
                     m_term.print_next_line("error: ");
@@ -82,7 +82,7 @@ void lake_shell::run() {
     }
 }
 
-void lake_shell::display_prompt() {
+void Shell::display_prompt() {
     int y, x;
     getyx(m_win, y, x);
     y++;
@@ -103,7 +103,7 @@ void lake_shell::display_prompt() {
     noecho();
 }
 
-std::vector<std::shared_ptr<lsh::cmd::command>> process_input(std::string &line) {
-    auto tokens = lsh::tokenizer::tokenize(line);
-    return lsh::assembler::assemble_commands(tokens);
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string &line) {
+    auto tokens = LakeShell::Tokenizer::tokenize(line);
+    return LakeShell::Assembler::assemble_commands(tokens);
 }

@@ -1,4 +1,4 @@
-#include "../shell/cmd_assembler.hpp"
+#include "../shell/CmdAssembler.hpp"
 #include "catch.hpp"
 #include <string>
 #include <vector>

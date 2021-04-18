@@ -1,14 +1,14 @@
-#ifndef LAKE_SH_SHELL_CONTEXT_HPP
-#define LAKE_SH_SHELL_CONTEXT_HPP
+#ifndef LAKE_SH_SHELLCONTEXT_HPP
+#define LAKE_SH_SHELLCONTEXT_HPP
 
-#include "alias.hpp"
+#include "Alias.hpp"
 #include <string>
 #include <vector>
 
-namespace lsh {
-    class shell_context final {
+namespace LakeShell {
+    class ShellContext final {
     public:
-        shell_context();
+        ShellContext();
         void refresh();
         std::string get_working_dir();
         std::string get_user_home();
@@ -28,8 +28,8 @@ namespace lsh {
         std::string m_user_home;
         std::string m_username;
         std::vector<std::string> m_current_dirs;
-        alias_container m_alias_container;
+        AliasContainer m_alias_container;
     };
-}// namespace lsh
+}// namespace LakeShell
 
-#endif//LAKE_SH_SHELL_CONTEXT_HPP
+#endif //LAKE_SH_SHELLCONTEXT_HPP
