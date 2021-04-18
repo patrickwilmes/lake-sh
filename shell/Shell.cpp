@@ -4,6 +4,7 @@
 #include "CmdHandler.hpp"
 #include "Tokenizer.hpp"
 #include "utils/Utils.hpp"
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -14,28 +15,31 @@ static const std::string EXIT_KWD = "exit";
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
 
-std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string &line);
+constexpr int HISTORY_SIZE = 256;
 
-Shell::Shell() : m_shell_context(std::make_shared<ShellContext>()), m_history(History(256)), m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context)) {
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line);
+
+Shell::Shell()
+    : m_shell_context(std::make_shared<ShellContext>())
+    , m_history(History(HISTORY_SIZE))
+    , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
+{
     m_shell_context->refresh();
 }
 
-Shell::~Shell() {
+Shell::~Shell()
+{
     endwin();
 }
 
-void Shell::run() {
+void Shell::run()
+{
     display_prompt();
     while (m_running) {
-        //        char *inbuf = (char *) malloc(sizeof(char) * 2048);
-        bool collecting_input = true;
         bool direct_command = false;
-        //        int x, y;
-        //        getyx(m_win, y, x);
         auto input = m_term.get_input();
         std::string command_input(input.input);
         trim(command_input);
-        //        free(inbuf);
         echo();
         refresh();
         if (command_input == EXIT_KWD) {
@@ -60,16 +64,16 @@ void Shell::run() {
                         }
                     }
                     m_history.add(command_input);
-                } catch (InvalidCommandException&e) {
+                } catch (InvalidCommandException& e) {
                     m_term.print_next_line("invalid Command class: ");
                     m_term.print(e.what());
-                } catch (CommandNotFoundException&e) {
+                } catch (CommandNotFoundException& e) {
                     m_term.print_next_line("Command not found: ");
                     m_term.print(e.what());
-                } catch (std::runtime_error &e) {
+                } catch (std::runtime_error& e) {
                     m_term.print_next_line("Command not found: ");
                     m_term.print(e.what());
-                } catch (std::exception &e) {
+                } catch (std::exception& e) {
                     m_term.print_next_line("error: ");
                     m_term.print(e.what());
                 }
@@ -82,28 +86,19 @@ void Shell::run() {
     }
 }
 
-void Shell::display_prompt() {
-    int y, x;
-    getyx(m_win, y, x);
-    y++;
-    echo();
-    start_color();
-    mvaddstr(y, 0, m_shell_context->get_username().c_str());
-    addstr(" @ ");
+void Shell::display_prompt()
+{
     auto user_home = m_shell_context->get_user_home();
     auto working_dir = m_shell_context->get_working_dir();
     auto prompt_dir = working_dir.replace(0, user_home.length(), "");
+    auto user = m_shell_context->get_username();
     prompt_dir = "~" + prompt_dir;
-    addstr(prompt_dir.c_str());
-    if (m_shell_context->is_git_dir()) {
-        addstr("(git) >> ");
-    } else {
-        addstr(" >> ");
-    }
-    noecho();
+    auto prompt = user + " @ " + prompt_dir + " >> ";
+    m_term.display_prompt(prompt);
 }
 
-std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string &line) {
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line)
+{
     auto tokens = LakeShell::Tokenizer::tokenize(line);
     return LakeShell::Assembler::assemble_commands(tokens);
 }
