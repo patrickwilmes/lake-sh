@@ -89,6 +89,7 @@ Term::Input Term::Terminal::get_input()
     echo();
     std::string input(input_buf);
     free(input_buf);
+    addstr(input_buf);
     return { .input = input, .key = pressed_key };
 }
 
@@ -114,4 +115,9 @@ void Term::Terminal::display_prompt(const std::string& msg)
     start_color();
     mvaddstr(y, 0, msg.c_str());
     noecho();
+}
+
+void Term::Terminal::register_observer(const std::shared_ptr<Term::TerminalObserver>& observer)
+{
+    m_observers.push_back(observer);
 }

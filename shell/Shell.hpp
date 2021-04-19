@@ -6,16 +6,18 @@
 #include "History.hpp"
 #include "ShellContext.hpp"
 #include <Terminal.hpp>
+#include <TerminalObserver.hpp>
 #include <memory>
 
 namespace LakeShell {
     using namespace LakeShell::Cmd;
 
-    class Shell final {
+    class Shell final : public Term::TerminalObserver {
     public:
         Shell();
         ~Shell();
         void run();
+        void notify(std::string &msg) override;
 
     private:
         void display_prompt();

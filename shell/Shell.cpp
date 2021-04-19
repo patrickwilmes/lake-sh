@@ -25,6 +25,7 @@ Shell::Shell()
     , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
 {
     m_shell_context->refresh();
+    m_term.register_observer(std::shared_ptr<TerminalObserver>(this));
 }
 
 Shell::~Shell()
@@ -90,6 +91,11 @@ void Shell::display_prompt()
     prompt_dir = "~" + prompt_dir;
     auto prompt = user + " @ " + prompt_dir + " >> ";
     m_term.display_prompt(prompt);
+}
+
+void Shell::notify(std::string &msg)
+{
+    m_term.print_next_line(msg);
 }
 
 std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line)

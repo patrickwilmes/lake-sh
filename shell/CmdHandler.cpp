@@ -125,6 +125,7 @@ void LakeShell::Cmd::CommandHandler::index_path()
 
     size_t pos;
     std::string token;
+    // todo - this could maybe be done in parallel
     while ((pos = path.find(delim)) != std::string::npos) {
         token = path.substr(0, pos);
         for (const auto& entry : std::filesystem::directory_iterator(token))
