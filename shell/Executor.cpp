@@ -89,7 +89,6 @@ std::string LakeShell::Executor::execute()
         if (m_cmd->get_name() != "clear") {
             close(fd[0]);
             dup2(fd[1], 1);
-            dup2(fd[1], 2);
             close(fd[1]);
         }
         execvp(c, args);
