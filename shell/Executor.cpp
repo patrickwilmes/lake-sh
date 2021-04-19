@@ -77,7 +77,7 @@ std::string LakeShell::Executor::execute()
         args[i] = const_cast<char *>(arg.c_str());
         i++;
     }
-    args[i] = NULL;
+    args[i] = nullptr;
     if (pipe(fd) == -1) {
         throw std::runtime_error("failed to initialize pipe!");
     }
