@@ -30,7 +30,7 @@ std::string LakeShell::Cmd::CommandHandler::handle_commands(std::vector<std::sha
     std::copy_if(cmds.begin(), cmds.end(), std::back_inserter(extern_cmds), copy_if_is_external_cmd);
     validate_external_commands(cmds);
     auto resolved_cmds = resolve_aliased_commands(cmds);
-    return handle_extern_cmds(resolved_cmds);
+    return LakeShell::create_executor(cmds)->execute();
 }
 
 LakeShell::Cmd::CommandHandler::CommandHandler(std::shared_ptr<ShellContext>& shell_context)
@@ -99,17 +99,6 @@ std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr
         return arg;
     }
     throw CommandNotFoundException(cmd_name.c_str());
-}
-
-std::string LakeShell::Cmd::CommandHandler::handle_extern_cmds(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds)
-{
-    if (cmds.size() == 1) {
-        // todo - make aliasing happening here
-        Executor exec(cmds.front());
-        return exec.execute();
-    }
-    PipedExecutor executor(cmds);
-    return executor.execute();
 }
 
 bool LakeShell::Cmd::CommandHandler::external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd)

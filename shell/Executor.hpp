@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace LakeShell {
+
     class Executor {
     public:
         Executor() = default;
@@ -28,6 +29,8 @@ namespace LakeShell {
     private:
         const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> m_cmds;
     };
+
+    std::shared_ptr<Executor> create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> &commands);
 }
 
 #endif //LAKE_SH_EXECUTOR_HPP

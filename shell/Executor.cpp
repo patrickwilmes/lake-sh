@@ -121,3 +121,11 @@ LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd)
     : m_cmd(std::move(cmd))
 {
 }
+
+std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& commands)
+{
+    if (commands.size() == 1) {
+        return std::make_shared<LakeShell::Executor>(commands.front());
+    }
+    return std::make_shared<LakeShell::PipedExecutor>(commands);
+}
