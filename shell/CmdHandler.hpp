@@ -18,8 +18,6 @@ namespace LakeShell::Cmd {
         std::string handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command> &cmd);
         std::string handle_extern_cmds(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> &cmds);
 
-        bool is_not_sync_command(std::shared_ptr<LakeShell::Cmd::Command> cmd);
-
         bool external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd);
         void validate_external_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
 

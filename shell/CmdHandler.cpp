@@ -100,16 +100,10 @@ std::string LakeShell::Cmd::CommandHandler::handle_extern_cmds(const std::vector
     if (cmds.size() == 1) {
         // todo - make aliasing happening here
         Executor exec(cmds.front());
-        exec.execute();
-    } else {
-        PipedExecutor executor(cmds);
-        return executor.execute();
+        return exec.execute();
     }
-    return "";
-}
-
-bool LakeShell::Cmd::CommandHandler::is_not_sync_command(std::shared_ptr<LakeShell::Cmd::Command> cmd) {
-    return cmd->get_name() != "clear";
+    PipedExecutor executor(cmds);
+    return executor.execute();
 }
 
 bool LakeShell::Cmd::CommandHandler::external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd) {
