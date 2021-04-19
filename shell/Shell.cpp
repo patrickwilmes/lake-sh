@@ -3,8 +3,8 @@
 #include "CmdAssembler.hpp"
 #include "CmdHandler.hpp"
 #include "Tokenizer.hpp"
-#include "utils/Utils.hpp"
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -42,6 +42,7 @@ void Shell::run()
         Shell::set_jump_active();
 
         char * line = readline(" >> ");
+        add_history(line);
         std::string input(line);
         if (input == "exit") {
             break;
