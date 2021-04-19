@@ -40,7 +40,4 @@ set(SRC
         )
 
 add_executable(lsh main.cpp ${SRC})
-target_link_libraries(lsh ncurses term readline)
-target_include_directories(lsh PRIVATE
-        ${CMAKE_SOURCE_DIR}/lib/term
-        )
+target_link_libraries(lsh readline)

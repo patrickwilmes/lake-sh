@@ -1,5 +1,4 @@
 #include "Executor.hpp"
-#include <Terminal.hpp>
 #include <filesystem>
 #include <sys/wait.h>
 #include <unistd.h>
