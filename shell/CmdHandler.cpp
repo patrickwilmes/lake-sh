@@ -98,55 +98,9 @@ std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr
 
 std::string LakeShell::Cmd::CommandHandler::handle_extern_cmds(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> &cmds) {
     if (cmds.size() == 1) {
-        int fd[2];
-        auto cmd_to_exec = cmds.front();
-        auto cmd_name = cmd_to_exec->get_name();
-        if (m_shell_context->alias_exists(cmd_name)) {
-            cmd_name = m_shell_context->get_origin_of_alias(cmd_name);
-        }
-        int child_status;
-        const char *c = cmd_name.c_str();
-        char *args[cmd_to_exec->arg_count() + 2];
-        args[0] = const_cast<char *>(c);
-        int i = 1;
-        for (auto &arg : cmd_to_exec->get_args()) {
-            args[i] = const_cast<char *>(arg.c_str());
-            i++;
-        }
-        args[i] = NULL;
-        if (pipe(fd) == -1) {
-            throw std::runtime_error("failed to initialize pipe!");
-        }
-        pid_t p;
-        pid_t pid = fork();
-        if (pid < 0) {
-            std::cerr << "fork failed" << std::endl;
-            throw std::runtime_error("failed to fork process");
-        } else if (pid == 0) {
-            if (is_not_sync_command(cmd_to_exec)) {
-                close(fd[0]);
-                dup2(fd[1], 1);
-                dup2(fd[1], 2);
-                close(fd[1]);
-            }
-            execvp(c, args);
-            throw std::runtime_error("failed to execute Command!");
-        } else {
-            do {
-                p = wait(&child_status);
-            } while (p != pid);
-            if (is_not_sync_command(cmd_to_exec)) {
-                char buffer[2048];
-                for (char & b : buffer) {
-                    b = 0;
-                }
-                close(fd[1]);
-                while (read(fd[0], buffer, sizeof(buffer)) != 0)
-                    ;
-                std::string data(buffer);
-                return data;
-            }
-        }
+        // todo - make aliasing happening here
+        Executor exec(cmds.front());
+        exec.execute();
     } else {
         PipedExecutor executor(cmds);
         return executor.execute();

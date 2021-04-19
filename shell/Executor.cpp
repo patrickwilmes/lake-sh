@@ -1,6 +1,7 @@
 #include "Executor.hpp"
 #include <filesystem>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <utility>
 
 LakeShell::PipedExecutor::PipedExecutor(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds) : m_cmds(std::move(cmds)) {}
@@ -60,4 +61,57 @@ int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Comm
     close(fd[1]);
 
     return fd[0];
+}
+
+std::string LakeShell::Executor::execute()
+{
+    int fd[2];
+    auto cmd_name = m_cmd->get_name();
+    int child_status;
+    const char *c = cmd_name.c_str();
+    char *args[m_cmd->arg_count() + 2];
+    args[0] = const_cast<char *>(c);
+    int i = 1;
+    for (auto &arg : m_cmd->get_args()) {
+        args[i] = const_cast<char *>(arg.c_str());
+        i++;
+    }
+    args[i] = NULL;
+    if (pipe(fd) == -1) {
+        throw std::runtime_error("failed to initialize pipe!");
+    }
+    pid_t p;
+    pid_t pid = fork();
+    if (pid < 0) {
+        throw std::runtime_error("failed to fork process");
+    } else if (pid == 0) {
+        if (m_cmd->get_name() != "clear") {
+            close(fd[0]);
+            dup2(fd[1], 1);
+            dup2(fd[1], 2);
+            close(fd[1]);
+        }
+        execvp(c, args);
+        throw std::runtime_error("failed to execute Command!");
+    } else {
+        do {
+            p = wait(&child_status);
+        } while (p != pid);
+        if (m_cmd->get_name() != "clear") {
+            char buffer[2048];
+            for (char & b : buffer) {
+                b = 0;
+            }
+            close(fd[1]);
+            while (read(fd[0], buffer, sizeof(buffer)) != 0)
+                ;
+            std::string data(buffer);
+            return data;
+        }
+    }
+    return std::string();
+}
+
+LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd): m_cmd(std::move(cmd))
+{
 }
