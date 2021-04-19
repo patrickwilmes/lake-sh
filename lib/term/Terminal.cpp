@@ -1,7 +1,15 @@
 #include "Terminal.hpp"
+#include <unistd.h>
 
 constexpr int CTRL_L_KEY = 12;
 constexpr int ENTER_KEY = 10;
+
+void Term::guarded_call(const char *cmd, char** argv)
+{
+    reset_shell_mode();
+    execvp(cmd, argv);
+    reset_prog_mode();
+}
 
 Term::Terminal::Terminal() : m_win(initscr()) {
     clear();

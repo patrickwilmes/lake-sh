@@ -1,4 +1,5 @@
 #include "Executor.hpp"
+#include <Terminal.hpp>
 #include <filesystem>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -85,29 +86,30 @@ std::string LakeShell::Executor::execute()
     if (pid < 0) {
         throw std::runtime_error("failed to fork process");
     } else if (pid == 0) {
-        if (m_cmd->get_name() != "clear") {
-            close(fd[0]);
-            dup2(fd[1], 1);
-            dup2(fd[1], 2);
-            close(fd[1]);
-        }
-        execvp(c, args);
+//        if (m_cmd->get_name() != "clear") {
+//            close(fd[0]);
+//            dup2(fd[1], 1);
+//            dup2(fd[1], 2);
+//            close(fd[1]);
+//        }
+//        execvp(c, args);
+        Term::guarded_call(c, args);
         throw std::runtime_error("failed to execute Command!");
     } else {
         do {
             p = wait(&child_status);
         } while (p != pid);
-        if (m_cmd->get_name() != "clear") {
-            char buffer[2048];
-            for (char & b : buffer) {
-                b = 0;
-            }
-            close(fd[1]);
-            while (read(fd[0], buffer, sizeof(buffer)) != 0)
-                ;
-            std::string data(buffer);
-            return data;
-        }
+//        if (m_cmd->get_name() != "clear") {
+//            char buffer[2048];
+//            for (char & b : buffer) {
+//                b = 0;
+//            }
+//            close(fd[1]);
+//            while (read(fd[0], buffer, sizeof(buffer)) != 0)
+//                ;
+//            std::string data(buffer);
+//            return data;
+//        }
     }
     return std::string();
 }

@@ -5,6 +5,9 @@
 #include <string>
 
 namespace Term {
+
+    void guarded_call(const char * cmd, char ** argv);
+
     enum Keys {
         NONE,
         KEY_ARROW_UP,
