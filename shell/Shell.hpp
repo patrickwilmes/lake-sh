@@ -27,6 +27,6 @@ namespace LakeShell {
         CommandHandler m_cmd_handler;
         Term::Terminal m_term;
     };
-}// namespace LakeShell
+} // namespace LakeShell
 
-#endif//LAKE_SH_LSH_H
+#endif //LAKE_SH_LSH_H

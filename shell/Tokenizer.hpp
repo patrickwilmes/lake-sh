@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace LakeShell::Tokenizer {
-    std::vector<std::string> tokenize(std::string &line);
+    std::vector<std::string> tokenize(std::string& line);
 }
 
-#endif//LAKE_SH_TOKENIZER_HPP
+#endif //LAKE_SH_TOKENIZER_HPP

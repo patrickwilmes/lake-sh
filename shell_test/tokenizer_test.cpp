@@ -1,11 +1,12 @@
 #ifndef CATCH_CONFIG_MAIN
-#define CATCH_CONFIG_MAIN
+#    define CATCH_CONFIG_MAIN
 #endif
 #include "../shell/Tokenizer.hpp"
 #include "catch.hpp"
 #include <string>
 
-TEST_CASE("lexing a command having an equal sign") {
+TEST_CASE("lexing a command having an equal sign")
+{
     std::string cmd = "alias ll=\"ls -latr\"";
     auto tokens = lsh::tokenizer::tokenize(cmd);
 
@@ -15,7 +16,8 @@ TEST_CASE("lexing a command having an equal sign") {
     REQUIRE(tokens[2] == "ls -latr");
 }
 
-TEST_CASE("lexing a simple single word command") {
+TEST_CASE("lexing a simple single word command")
+{
     std::string cmd = "ls";
     auto tokens = lsh::tokenizer::tokenize(cmd);
 
@@ -23,7 +25,8 @@ TEST_CASE("lexing a simple single word command") {
     REQUIRE(tokens[0] == "ls");
 }
 
-TEST_CASE("lexing an echo command having a space separated text") {
+TEST_CASE("lexing an echo command having a space separated text")
+{
     std::string cmd = "echo \"hello world\"";
     auto tokens = lsh::tokenizer::tokenize(cmd);
 
@@ -32,7 +35,8 @@ TEST_CASE("lexing an echo command having a space separated text") {
     REQUIRE(tokens[1] == "hello world");
 }
 
-TEST_CASE("lexing piped commands") {
+TEST_CASE("lexing piped commands")
+{
     std::string cmd = "ls -latr | sort";
     auto tokens = lsh::tokenizer::tokenize(cmd);
 

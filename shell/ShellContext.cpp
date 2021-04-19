@@ -14,7 +14,8 @@ using namespace LakeShell::Assembler;
 
 const std::string ShellContext::LAKE_SHELL_PROFILE = ".lakesh";
 
-void LakeShell::ShellContext::refresh() {
+void LakeShell::ShellContext::refresh()
+{
     m_current_wd = LakeShell::User::current_wd();
     m_user_home = LakeShell::User::usr_home_dir();
     m_username = LakeShell::User::get_user_name();
@@ -24,39 +25,48 @@ void LakeShell::ShellContext::refresh() {
     m_is_git = std::filesystem::exists(".git");
 }
 
-std::string LakeShell::ShellContext::get_working_dir() {
+std::string LakeShell::ShellContext::get_working_dir()
+{
     return m_current_wd;
 }
 
-std::string LakeShell::ShellContext::get_user_home() {
+std::string LakeShell::ShellContext::get_user_home()
+{
     return m_user_home;
 }
 
-std::string LakeShell::ShellContext::get_username() {
+std::string LakeShell::ShellContext::get_username()
+{
     return m_username;
 }
 
-std::string LakeShell::ShellContext::get_relative_working_dir() {
+std::string LakeShell::ShellContext::get_relative_working_dir()
+{
     return std::string();
 }
 
-bool LakeShell::ShellContext::is_git_dir() {
+bool LakeShell::ShellContext::is_git_dir()
+{
     return m_is_git;
 }
 
-void LakeShell::ShellContext::add_alias(std::string name, std::string origin) {
+void LakeShell::ShellContext::add_alias(std::string name, std::string origin)
+{
     m_alias_container.add(std::move(name), std::move(origin));
 }
 
-bool LakeShell::ShellContext::alias_exists(std::string &name) {
+bool LakeShell::ShellContext::alias_exists(std::string& name)
+{
     return m_alias_container.exists(name);
 }
 
-std::string LakeShell::ShellContext::get_origin_of_alias(std::string &name) {
+std::string LakeShell::ShellContext::get_origin_of_alias(std::string& name)
+{
     return m_alias_container.get_origin(name);
 }
 
-void LakeShell::ShellContext::load_shell_profile() {
+void LakeShell::ShellContext::load_shell_profile()
+{
     auto user_home = get_user_home();
     auto profile = user_home + "/" + LAKE_SHELL_PROFILE;
     if (!std::filesystem::exists(profile)) {
@@ -67,7 +77,7 @@ void LakeShell::ShellContext::load_shell_profile() {
     while (std::getline(infile, line)) {
         auto tokens = tokenize(line);
         auto cmds = assemble_commands(tokens);
-        for (auto &cmd : cmds) {
+        for (auto& cmd : cmds) {
             if (cmd->get_name() == "alias") {
                 cmd->ensure_has_args(2);
                 auto alias = cmd->get_args()[0];
@@ -78,14 +88,16 @@ void LakeShell::ShellContext::load_shell_profile() {
     }
 }
 
-ShellContext::ShellContext() {
+ShellContext::ShellContext()
+{
     load_shell_profile();
 }
 
-std::vector<std::string> ShellContext::get_path_completions(const std::string &partial_path) {
+std::vector<std::string> ShellContext::get_path_completions(const std::string& partial_path)
+{
     auto wd = get_working_dir();
     std::vector<std::string> path_completions;
-    for (auto &path : m_current_dirs) {
+    for (auto& path : m_current_dirs) {
         if (path.starts_with(partial_path)) {
             path_completions.push_back(path);
         }

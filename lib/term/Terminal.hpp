@@ -6,7 +6,7 @@
 
 namespace Term {
 
-    void guarded_call(const char * cmd, char ** argv);
+    void guarded_call(const char* cmd, char** argv);
 
     enum Keys {
         NONE,
@@ -23,15 +23,16 @@ namespace Term {
     public:
         Terminal();
         ~Terminal();
-        void print(const std::string &msg);
-        void println(const std::string &msg);
-        void print_next_line(const std::string &msg);
-        void display_prompt(const std::string &msg);
+        void print(const std::string& msg);
+        void println(const std::string& msg);
+        void print_next_line(const std::string& msg);
+        void display_prompt(const std::string& msg);
         Input get_input();
+
     private:
         static constexpr uint32_t MAX_INPUT_LEN = 2048;
-        WINDOW *m_win;
+        WINDOW* m_win;
     };
-}// namespace Term
+} // namespace Term
 
-#endif//LAKE_SH_TERMINAL_HPP
+#endif //LAKE_SH_TERMINAL_HPP

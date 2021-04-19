@@ -7,25 +7,28 @@
 
 namespace LakeShell {
     template<typename T>
-    void dbg(T t) {
+    void dbg(T t)
+    {
 #ifdef SHELL_DEBUG
         std::cout << t << std::endl;
 #endif
     }
 
     template<typename T, typename Arg>
-    void dbg(T t, Arg a) {
+    void dbg(T t, Arg a)
+    {
 #ifdef SHELL_DEBUG
         std::cout << t << " " << a << std::endl;
 #endif
     }
 
     template<typename T, typename ArgOne, typename ArgTwo>
-    void dbg(T t, ArgOne a, ArgTwo b) {
+    void dbg(T t, ArgOne a, ArgTwo b)
+    {
 #ifdef SHELL_DEBUG
         std::cout << t << " " << a << " " << b << std::endl;
 #endif
     }
-}// namespace LakeShell
+} // namespace LakeShell
 
-#endif//LAKE_SH_LOGGER_HPP
+#endif //LAKE_SH_LOGGER_HPP

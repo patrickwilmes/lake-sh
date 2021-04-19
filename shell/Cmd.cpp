@@ -2,25 +2,33 @@
 
 #include <utility>
 
-LakeShell::Cmd::Command::Command(std::string name) : m_name(std::move(name)) {}
+LakeShell::Cmd::Command::Command(std::string name)
+    : m_name(std::move(name))
+{
+}
 
-void LakeShell::Cmd::Command::add_arg(const std::string& arg) {
+void LakeShell::Cmd::Command::add_arg(const std::string& arg)
+{
     m_args.push_back(arg);
 }
 
-void LakeShell::Cmd::Command::ensure_has_args(const uint32_t expected_number) {
+void LakeShell::Cmd::Command::ensure_has_args(const uint32_t expected_number)
+{
     if (expected_number != m_args.size()) {
         throw InvalidCommandException(m_name.c_str());
     }
 }
 
-std::string LakeShell::Cmd::Command::get_name() {
+std::string LakeShell::Cmd::Command::get_name()
+{
     return m_name;
 }
 
-std::vector<std::string> LakeShell::Cmd::Command::get_args() {
+std::vector<std::string> LakeShell::Cmd::Command::get_args()
+{
     return m_args;
 }
-uint32_t LakeShell::Cmd::Command::arg_count() {
+uint32_t LakeShell::Cmd::Command::arg_count()
+{
     return m_args.size();
 }

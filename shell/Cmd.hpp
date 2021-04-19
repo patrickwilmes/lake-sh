@@ -9,22 +9,34 @@
 namespace LakeShell::Cmd {
     class InvalidCommandException : public std::exception {
     public:
-        explicit InvalidCommandException(const char * name): std::exception(), m_name(name) {}
-        [[nodiscard]] const char * what() const noexcept override {
+        explicit InvalidCommandException(const char* name)
+            : std::exception()
+            , m_name(name)
+        {
+        }
+        [[nodiscard]] const char* what() const noexcept override
+        {
             return m_name;
         }
+
     private:
-        const char *m_name;
+        const char* m_name;
     };
 
     class CommandNotFoundException : public std::exception {
     public:
-        explicit CommandNotFoundException(const char * name): std::exception(), m_name(name) {}
-        [[nodiscard]] const char * what() const noexcept override {
+        explicit CommandNotFoundException(const char* name)
+            : std::exception()
+            , m_name(name)
+        {
+        }
+        [[nodiscard]] const char* what() const noexcept override
+        {
             return m_name;
         }
+
     private:
-        const char *m_name;
+        const char* m_name;
     };
 
     class Command final {
@@ -35,10 +47,11 @@ namespace LakeShell::Cmd {
         std::string get_name();
         std::vector<std::string> get_args();
         uint32_t arg_count();
+
     private:
         const std::string m_name;
         std::vector<std::string> m_args;
     };
 }
 
-#endif//LAKE_SH_CMD_HPP
+#endif //LAKE_SH_CMD_HPP

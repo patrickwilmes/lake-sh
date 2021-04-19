@@ -1,7 +1,8 @@
 #include "Shell.hpp"
 #include <cstdlib>
 
-int main() {
+int main()
+{
     LakeShell::Shell shell;
     shell.run();
     return EXIT_SUCCESS;

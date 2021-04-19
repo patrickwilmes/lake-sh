@@ -8,6 +8,6 @@
 
 namespace LakeShell::Assembler {
     std::vector<std::shared_ptr<LakeShell::Cmd::Command>> assemble_commands(std::vector<std::string> tokens);
-}// namespace LakeShell::Assembler
+} // namespace LakeShell::Assembler
 
-#endif//LAKE_SH_CMD_ASSEMBLER_H
+#endif //LAKE_SH_CMD_ASSEMBLER_H

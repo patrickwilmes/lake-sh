@@ -1,13 +1,17 @@
 #include "Executor.hpp"
 #include <Terminal.hpp>
 #include <filesystem>
-#include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <utility>
 
-LakeShell::PipedExecutor::PipedExecutor(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds) : m_cmds(std::move(cmds)) {}
+LakeShell::PipedExecutor::PipedExecutor(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
+    : m_cmds(std::move(cmds))
+{
+}
 
-std::string LakeShell::PipedExecutor::execute() {
+std::string LakeShell::PipedExecutor::execute()
+{
     int input = 0;
     int num_cmds = m_cmds.size();
     for (int i = 0; i < num_cmds; i++) {
@@ -21,7 +25,8 @@ std::string LakeShell::PipedExecutor::execute() {
     return data;
 }
 
-int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Command> cmd, int input, bool is_first, bool is_last) {
+int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Command> cmd, int input, bool is_first, bool is_last)
+{
     int pid;
     int fd[2];
     pipe(fd);
@@ -35,18 +40,18 @@ int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Comm
             dup2(fd[1], STDOUT_FILENO);
         } else if (is_last) {
             dup2(input, STDIN_FILENO);
-            dup2(fd[1], STDOUT_FILENO);// exp
+            dup2(fd[1], STDOUT_FILENO); // exp
         } else {
             dup2(input, STDIN_FILENO);
             dup2(fd[1], STDOUT_FILENO);
         }
         auto cmd_name = cmd->get_name();
-        const char *c = cmd_name.c_str();
-        char *args[cmd->arg_count() + 2];
-        args[0] = const_cast<char *>(c);
+        const char* c = cmd_name.c_str();
+        char* args[cmd->arg_count() + 2];
+        args[0] = const_cast<char*>(c);
         int i = 1;
-        for (auto &arg : cmd->get_args()) {
-            args[i] = const_cast<char *>(arg.c_str());
+        for (auto& arg : cmd->get_args()) {
+            args[i] = const_cast<char*>(arg.c_str());
             i++;
         }
         args[i] = nullptr;
@@ -69,12 +74,12 @@ std::string LakeShell::Executor::execute()
     int fd[2];
     auto cmd_name = m_cmd->get_name();
     int child_status;
-    const char *c = cmd_name.c_str();
-    char *args[m_cmd->arg_count() + 2];
-    args[0] = const_cast<char *>(c);
+    const char* c = cmd_name.c_str();
+    char* args[m_cmd->arg_count() + 2];
+    args[0] = const_cast<char*>(c);
     int i = 1;
-    for (auto &arg : m_cmd->get_args()) {
-        args[i] = const_cast<char *>(arg.c_str());
+    for (auto& arg : m_cmd->get_args()) {
+        args[i] = const_cast<char*>(arg.c_str());
         i++;
     }
     args[i] = nullptr;
@@ -99,7 +104,7 @@ std::string LakeShell::Executor::execute()
         } while (p != pid);
         if (m_cmd->get_name() != "clear") {
             char buffer[2048];
-            for (char & b : buffer) {
+            for (char& b : buffer) {
                 b = 0;
             }
             close(fd[1]);
@@ -112,6 +117,7 @@ std::string LakeShell::Executor::execute()
     return std::string();
 }
 
-LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd): m_cmd(std::move(cmd))
+LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd)
+    : m_cmd(std::move(cmd))
 {
 }
