@@ -137,6 +137,9 @@ std::string LakeShell::Cmd::CommandHandler::handle_extern_cmds(const std::vector
             } while (p != pid);
             if (is_not_sync_command(cmd_to_exec)) {
                 char buffer[2048];
+                for (char & b : buffer) {
+                    b = 0;
+                }
                 close(fd[1]);
                 while (read(fd[0], buffer, sizeof(buffer)) != 0)
                     ;
