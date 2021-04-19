@@ -4,6 +4,7 @@
 #include "CmdHandler.hpp"
 #include "Tokenizer.hpp"
 #include "utils/Utils.hpp"
+#include <readline/readline.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -17,6 +18,9 @@ constexpr int ENTER_KEY = 10;
 
 constexpr int HISTORY_SIZE = 256;
 
+volatile sig_atomic_t Shell::m_jump_active = 0;
+sigjmp_buf Shell::m_env;
+
 std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line);
 
 Shell::Shell()
@@ -25,77 +29,54 @@ Shell::Shell()
     , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
 {
     m_shell_context->refresh();
-    m_term.register_observer(std::shared_ptr<TerminalObserver>(this));
-}
-
-Shell::~Shell()
-{
-    endwin();
 }
 
 void Shell::run()
 {
-    display_prompt();
-    while (m_running) {
-        auto input = m_term.get_input();
-        std::string command_input(input.input);
-        trim(command_input);
-        echo();
-        refresh();
-        if (command_input == EXIT_KWD) {
-            m_running = false;
-        } else {
-            if (!command_input.empty()) {
-                auto cmds = process_input(command_input);
-                try {
-                    std::string render_data = m_cmd_handler.handle_commands(cmds);
-                    trim(render_data);
-                    if (!render_data.empty()) {
-                        std::stringstream ss(render_data);
-                        std::string target;
-                        while (std::getline(ss, target, '\n')) {
-                            if (!target.empty()) {
-                                m_term.print_next_line(target);
-                            }
-                        }
-                    }
-                    m_history.add(command_input);
-                } catch (InvalidCommandException& e) {
-                    m_term.print_next_line("invalid Command class: ");
-                    m_term.print(e.what());
-                } catch (CommandNotFoundException& e) {
-                    m_term.print_next_line("Command not found: ");
-                    m_term.print(e.what());
-                } catch (std::runtime_error& e) {
-                    m_term.print_next_line("Command not found: ");
-                    m_term.print(e.what());
-                } catch (std::exception& e) {
-                    m_term.print_next_line("error: ");
-                    m_term.print(e.what());
-                }
-            }
+    setup_sig_handling();
+    while (true) {
+        if (sigsetjmp(m_env, 1) == 42) {
+            printf("\n");
+            continue;
         }
-        noecho();
-        m_shell_context->refresh();
-        display_prompt();
-        refresh();
+        Shell::set_jump_active();
+
+        char * line = readline(" >> ");
+        std::string input(line);
+        if (input == "exit") {
+            break;
+        }
+
+        auto tokens = LakeShell::Tokenizer::tokenize(input);
+        auto cmds = LakeShell::Assembler::assemble_commands(tokens);
+        m_cmd_handler.handle_commands(cmds);
     }
 }
 
-void Shell::display_prompt()
+void Shell::set_jump_active()
 {
-    auto user_home = m_shell_context->get_user_home();
-    auto working_dir = m_shell_context->get_working_dir();
-    auto prompt_dir = working_dir.replace(0, user_home.length(), "");
-    auto user = m_shell_context->get_username();
-    prompt_dir = "~" + prompt_dir;
-    auto prompt = user + " @ " + prompt_dir + " >> ";
-    m_term.display_prompt(prompt);
+    m_jump_active = 1;
 }
 
-void Shell::notify(std::string &msg)
+void Shell::sigint_handler(int signo)
 {
-    m_term.print_next_line(msg);
+    if (!m_jump_active) {
+        return;
+    }
+    siglongjmp(m_env, 42);
+}
+void Shell::prompt()
+{
+    std::cout << " >> ";
+}
+
+void Shell::setup_sig_handling()
+{
+    struct sigaction s{};
+    s.sa_handler = Shell::sigint_handler;
+    sigemptyset(&s.sa_mask);
+    s.sa_flags = SA_RESTART;
+    sigaction(SIGINT, &s, nullptr);
 }
 
 std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line)

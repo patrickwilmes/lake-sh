@@ -34,10 +34,13 @@ set(SRC
 
         Executor.cpp
         Executor.hpp
+
+        Input.cpp
+        Input.hpp
         )
 
 add_executable(lsh main.cpp ${SRC})
-target_link_libraries(lsh ncurses term)
+target_link_libraries(lsh ncurses term readline)
 target_include_directories(lsh PRIVATE
         ${CMAKE_SOURCE_DIR}/lib/term
         )

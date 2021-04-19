@@ -40,7 +40,6 @@ int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Comm
             dup2(fd[1], STDOUT_FILENO);
         } else if (is_last) {
             dup2(input, STDIN_FILENO);
-            dup2(fd[1], STDOUT_FILENO); // exp
         } else {
             dup2(input, STDIN_FILENO);
             dup2(fd[1], STDOUT_FILENO);
@@ -91,28 +90,12 @@ std::string LakeShell::Executor::execute()
     if (pid < 0) {
         throw std::runtime_error("failed to fork process");
     } else if (pid == 0) {
-        if (m_cmd->get_name() != "clear") {
-            close(fd[0]);
-            dup2(fd[1], 1);
-            close(fd[1]);
-        }
         execvp(c, args);
         throw std::runtime_error("failed to execute Command!");
     } else {
         do {
             p = wait(&child_status);
         } while (p != pid);
-        if (m_cmd->get_name() != "clear") {
-            char buffer[2048];
-            for (char& b : buffer) {
-                b = 0;
-            }
-            close(fd[1]);
-            while (read(fd[0], buffer, sizeof(buffer)) != 0)
-                ;
-            std::string data(buffer);
-            return data;
-        }
     }
     return std::string();
 }

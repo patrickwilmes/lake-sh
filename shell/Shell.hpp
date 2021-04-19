@@ -5,29 +5,29 @@
 #include "CmdHandler.hpp"
 #include "History.hpp"
 #include "ShellContext.hpp"
-#include <Terminal.hpp>
-#include <TerminalObserver.hpp>
+#include <csetjmp>
+#include <csignal>
 #include <memory>
 
 namespace LakeShell {
     using namespace LakeShell::Cmd;
 
-    class Shell final : public Term::TerminalObserver {
+    class Shell final {
     public:
         Shell();
-        ~Shell();
         void run();
-        void notify(std::string &msg) override;
+        static void sigint_handler(int);
 
     private:
-        void display_prompt();
-
+        static void set_jump_active();
+        static void setup_sig_handling();
+        void prompt();
     private:
-        bool m_running = true;
+        static sigjmp_buf m_env;
+        static volatile sig_atomic_t m_jump_active;
         std::shared_ptr<ShellContext> m_shell_context;
         History m_history;
         CommandHandler m_cmd_handler;
-        Term::Terminal m_term;
     };
 } // namespace LakeShell
 
