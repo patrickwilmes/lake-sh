@@ -49,8 +49,9 @@ std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr
     auto cmd_name = cmd->get_name();
     auto args = cmd->get_args();
     if (cmd_name == PWD) {
+        cmd->ensure_has_args(0);
         std::string wd = LakeShell::User::current_wd();
-        return wd;
+        std::cout << wd << '\n' << std::flush;
     } else if (cmd_name == CD) {
         if (args.empty()) {
             std::string usr_home = LakeShell::User::usr_home_dir();
