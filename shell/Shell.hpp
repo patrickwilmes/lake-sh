@@ -21,7 +21,7 @@ namespace LakeShell {
     private:
         static void set_jump_active();
         static void setup_sig_handling();
-        void prompt();
+        std::string prompt();
     private:
         static sigjmp_buf m_env;
         static volatile sig_atomic_t m_jump_active;

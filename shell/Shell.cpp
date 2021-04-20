@@ -1,4 +1,5 @@
 #include "Shell.hpp"
+#include "utils/Utils.hpp"
 #include "Cmd.hpp"
 #include "CmdAssembler.hpp"
 #include "CmdHandler.hpp"
@@ -41,16 +42,28 @@ void Shell::run()
         }
         Shell::set_jump_active();
 
-        char * line = readline(" >> ");
+        auto p = prompt();
+        char * line = readline(p.c_str());
         add_history(line);
         std::string input(line);
         if (input == "exit") {
             break;
         }
 
-        auto tokens = LakeShell::Tokenizer::tokenize(input);
-        auto cmds = LakeShell::Assembler::assemble_commands(tokens);
-        m_cmd_handler.handle_commands(cmds);
+        trim(input);
+        if (!input.empty()) {
+            auto tokens = LakeShell::Tokenizer::tokenize(input);
+            auto cmds = LakeShell::Assembler::assemble_commands(tokens);
+            try {
+                m_cmd_handler.handle_commands(cmds);
+            }  catch (LakeShell::Cmd::CommandNotFoundException &e) {
+                std::cout << "command not found: " << e.what() << '\n' << std::flush;
+            } catch (LakeShell::Cmd::InvalidCommandException &e) {
+                std::cout << "invalid command call: " << e.what() << '\n' << std::flush;
+            } catch (std::exception &e) {
+                std::cout << "something went wrong: " << e.what() << std::flush;
+            }
+        }
     }
 }
 
@@ -66,9 +79,18 @@ void Shell::sigint_handler(int signo)
     }
     siglongjmp(m_env, 42);
 }
-void Shell::prompt()
+
+std::string Shell::prompt()
 {
-    std::cout << " >> ";
+    std::string prompt = m_shell_context->get_username();
+    auto user_home = m_shell_context->get_user_home();
+    auto wd = m_shell_context->get_working_dir();
+    if (wd.length() > user_home.length()) {
+        prompt += " @ ~" + wd.substr(user_home.length(), wd.length() - 1);
+    } else {
+        prompt += " @ " + m_shell_context->get_working_dir();
+    }
+    return prompt + " >> ";
 }
 
 void Shell::setup_sig_handling()
