@@ -41,3 +41,7 @@ set(SRC
 
 add_executable(lsh main.cpp ${SRC})
 target_link_libraries(lsh readline)
+
+add_executable(lsh_debug main.cpp ${SRC})
+target_link_libraries(lsh_debug readline)
+target_compile_definitions(lsh_debug PRIVATE SHELL_DEBUG)

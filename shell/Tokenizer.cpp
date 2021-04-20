@@ -28,7 +28,7 @@ std::vector<std::string> LakeShell::Tokenizer::tokenize(std::string& line)
         }
         tokens.push_back(token);
     }
-    if (line.length() > 2 || line.length() == origin_len)
+    if (line.length() > 2 || line.length() == origin_len || line == "..")
         tokens.push_back(line);
     return tokens;
 }

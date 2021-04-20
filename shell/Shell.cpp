@@ -56,6 +56,7 @@ void Shell::run()
             try {
                 m_cmd_handler.handle_commands(cmds);
                 add_history(line);
+                m_shell_context->refresh();
             }  catch (LakeShell::Cmd::CommandNotFoundException &e) {
                 std::cout << "command not found: " << e.what() << '\n' << std::flush;
             } catch (LakeShell::Cmd::InvalidCommandException &e) {

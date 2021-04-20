@@ -9,7 +9,6 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include <sys/wait.h>
 #include <unistd.h>
 
 using namespace LakeShell;
@@ -51,13 +50,15 @@ std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr
     if (cmd_name == PWD) {
         cmd->ensure_has_args(0);
         std::string wd = LakeShell::User::current_wd();
-        std::cout << wd << '\n' << std::flush;
+        std::cout << wd << '\n'
+                  << std::flush;
     } else if (cmd_name == CD) {
         if (args.empty()) {
             std::string usr_home = LakeShell::User::usr_home_dir();
             chdir(usr_home.c_str());
         } else {
             cmd->ensure_has_args(1);
+            dbg("got cmd with arg ", cmd->get_args()[0]);
             auto resolve_path = [](std::string& origin_path) {
                 std::string wd = LakeShell::User::current_wd();
                 if (origin_path == "..") {
