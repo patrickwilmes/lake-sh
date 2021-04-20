@@ -1,15 +1,12 @@
 set(SRC
+        Parser.cpp
+        Parser.hpp
+
         Shell.cpp
         Shell.hpp
 
-        Tokenizer.cpp
-        Tokenizer.hpp
-
         User.cpp
         User.hpp
-
-        CmdAssembler.cpp
-        CmdAssembler.hpp
 
         CmdHandler.cpp
         CmdHandler.hpp

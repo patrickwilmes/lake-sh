@@ -2,7 +2,6 @@
 #define LAKE_SH_CMDHANDLER_HPP
 
 #include "Cmd.hpp"
-#include "CmdAssembler.hpp"
 #include "ShellContext.hpp"
 #include <memory>
 #include <vector>

@@ -1,13 +1,12 @@
 #include "Shell.hpp"
-#include "utils/Utils.hpp"
 #include "Cmd.hpp"
-#include "CmdAssembler.hpp"
 #include "CmdHandler.hpp"
-#include "Tokenizer.hpp"
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "Parser.hpp"
+#include "utils/Utils.hpp"
 #include <iostream>
 #include <memory>
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <string>
 #include <vector>
 
@@ -15,8 +14,6 @@ using namespace LakeShell;
 
 volatile sig_atomic_t Shell::m_jump_active = 0;
 sigjmp_buf Shell::m_env;
-
-std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line);
 
 Shell::Shell()
     : m_shell_context(std::make_shared<ShellContext>())
@@ -37,7 +34,7 @@ void Shell::run()
         Shell::set_jump_active();
 
         auto p = prompt();
-        char * line = readline(p.c_str());
+        char* line = readline(p.c_str());
         std::string input(line);
         if (input == "exit") {
             break;
@@ -45,17 +42,18 @@ void Shell::run()
 
         trim(input);
         if (!input.empty()) {
-            auto tokens = LakeShell::Tokenizer::tokenize(input);
-            auto cmds = LakeShell::Assembler::assemble_commands(tokens);
+            auto cmds = LakeShell::Parser::parse_input(input);
             try {
                 m_cmd_handler.handle_commands(cmds);
                 add_history(line);
                 m_shell_context->refresh();
-            }  catch (LakeShell::Cmd::CommandNotFoundException &e) {
-                std::cout << "command not found: " << e.what() << '\n' << std::flush;
-            } catch (LakeShell::Cmd::InvalidCommandException &e) {
-                std::cout << "invalid command call: " << e.what() << '\n' << std::flush;
-            } catch (std::exception &e) {
+            } catch (LakeShell::Cmd::CommandNotFoundException& e) {
+                std::cout << "command not found: " << e.what() << '\n'
+                          << std::flush;
+            } catch (LakeShell::Cmd::InvalidCommandException& e) {
+                std::cout << "invalid command call: " << e.what() << '\n'
+                          << std::flush;
+            } catch (std::exception& e) {
                 std::cout << "something went wrong: " << e.what() << std::flush;
             }
         }
@@ -90,15 +88,10 @@ std::string Shell::prompt()
 
 void Shell::setup_sig_handling()
 {
-    struct sigaction s{};
+    struct sigaction s {
+    };
     s.sa_handler = Shell::sigint_handler;
     sigemptyset(&s.sa_mask);
     s.sa_flags = SA_RESTART;
     sigaction(SIGINT, &s, nullptr);
-}
-
-std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string& line)
-{
-    auto tokens = LakeShell::Tokenizer::tokenize(line);
-    return LakeShell::Assembler::assemble_commands(tokens);
 }

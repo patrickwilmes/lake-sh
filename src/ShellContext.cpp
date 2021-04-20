@@ -1,16 +1,14 @@
 #include "ShellContext.hpp"
 
-#include "CmdAssembler.hpp"
-#include "Tokenizer.hpp"
 #include "User.hpp"
 #include "utils/Utils.hpp"
+#include "Parser.hpp"
 #include <filesystem>
 #include <fstream>
 #include <utility>
 
 using namespace LakeShell;
-using namespace LakeShell::Tokenizer;
-using namespace LakeShell::Assembler;
+using namespace LakeShell::Parser;
 
 const std::string ShellContext::LAKE_SHELL_PROFILE = ".lakesh";
 
@@ -82,8 +80,7 @@ void LakeShell::ShellContext::load_shell_profile()
     std::ifstream infile(profile);
     std::string line;
     while (std::getline(infile, line)) {
-        auto tokens = tokenize(line);
-        auto cmds = assemble_commands(tokens);
+        auto cmds = parse_input(line);
         for (auto& cmd : cmds) {
             if (cmd->get_name() == "alias") {
                 cmd->ensure_has_args(2);

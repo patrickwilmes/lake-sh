@@ -1,9 +1,8 @@
 #include "CmdHandler.hpp"
-#include "CmdAssembler.hpp"
 #include "Executor.hpp"
 #include "Logger.hpp"
 #include "ShellContext.hpp"
-#include "Tokenizer.hpp"
+#include "Parser.hpp"
 #include "User.hpp"
 #include <cassert>
 #include <filesystem>
@@ -154,8 +153,7 @@ std::vector<std::shared_ptr<LakeShell::Cmd::Command>> Cmd::CommandHandler::resol
         auto cmd_name = cmd->get_name();
         if (m_shell_context->alias_exists(cmd_name)) {
             auto assoc_cmd = m_shell_context->get_origin_of_alias(cmd_name);
-            auto tokens = LakeShell::Tokenizer::tokenize(assoc_cmd);
-            auto result = LakeShell::Assembler::assemble_commands(tokens);
+            auto result = LakeShell::Parser::parse_input(assoc_cmd);
             for (auto& r : result) {
                 resolved_cmds.push_back(r);
             }
