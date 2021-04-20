@@ -13,23 +13,29 @@
 
 using namespace LakeShell;
 
-std::string LakeShell::Cmd::CommandHandler::handle_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
+void LakeShell::Cmd::CommandHandler::handle_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
 {
     auto copy_if_is_external_cmd = [&](const std::shared_ptr<LakeShell::Cmd::Command>& cmd) {
         return !is_own_cmd(cmd);
     };
 
+    bool was_handled = false;
+
     for (auto& cmd : cmds) {
         if (is_own_cmd(cmd)) {
-            return handle_own_cmd(cmd);
+            handle_own_cmd(cmd);
+            was_handled = true;
         }
+    }
+    if (was_handled) {
+        return;
     }
 
     std::vector<std::shared_ptr<LakeShell::Cmd::Command>> extern_cmds;
     std::copy_if(cmds.begin(), cmds.end(), std::back_inserter(extern_cmds), copy_if_is_external_cmd);
     validate_external_commands(cmds);
     auto resolved_cmds = resolve_aliased_commands(cmds);
-    return LakeShell::create_executor(cmds)->execute();
+    LakeShell::create_executor(cmds)->execute();
 }
 
 LakeShell::Cmd::CommandHandler::CommandHandler(std::shared_ptr<ShellContext>& shell_context)
@@ -43,8 +49,9 @@ bool LakeShell::Cmd::CommandHandler::is_own_cmd(const std::shared_ptr<LakeShell:
     return std::find(m_own_cmds.begin(), m_own_cmds.end(), cmd->get_name()) != m_own_cmds.end();
 }
 
-std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd)
+void LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd)
 {
+    bool was_executed = false;
     auto cmd_name = cmd->get_name();
     auto args = cmd->get_args();
     if (cmd_name == PWD) {
@@ -52,6 +59,7 @@ std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr
         std::string wd = LakeShell::User::current_wd();
         std::cout << wd << '\n'
                   << std::flush;
+        was_executed = true;
     } else if (cmd_name == CD) {
         if (args.empty()) {
             std::string usr_home = LakeShell::User::usr_home_dir();
@@ -71,36 +79,39 @@ std::string LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr
             };
             std::string path_string = resolve_path(args[0]);
             chdir(path_string.c_str());
-            return "";
+            return;
         }
+        was_executed = true;
     } else if (cmd_name == ALIAS) {
         cmd->ensure_has_args(2);
         LakeShell::dbg("printing shit", args[0], args[1]);
         m_shell_context->add_alias(args[0], args[1]);
-        return "";
+        was_executed = true;
     } else if (cmd_name == EXPORT) {
         cmd->ensure_has_args(2);
         std::string arg = args[0];
         auto key = args[0].c_str();
         auto value = args[1].c_str();
         setenv(key, value, true);
-        return "";
+        was_executed = true;
     } else if (cmd_name == UNEXPORT) {
         cmd->ensure_has_args(1);
         std::string arg = args[0];
         unsetenv(arg.c_str());
-        return "";
+        was_executed = true;
     } else if (cmd_name == ECHO) {
         cmd->ensure_has_args(1);
         std::string arg = args[0];
         if (arg[0] == '$') {
             auto key = arg.substr(1, arg.length());
             std::string value(getenv(key.c_str()));
-            return value;
+            arg = value;
         }
-        return arg;
+        std::cout << arg << '\n' << std::flush;
+        was_executed = true;
     }
-    throw CommandNotFoundException(cmd_name.c_str());
+    if (!was_executed)
+        throw CommandNotFoundException(cmd_name.c_str());
 }
 
 bool LakeShell::Cmd::CommandHandler::external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd)

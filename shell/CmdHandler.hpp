@@ -12,11 +12,11 @@ namespace LakeShell::Cmd {
     class CommandHandler final {
     public:
         explicit CommandHandler(std::shared_ptr<ShellContext>& shell_context);
-        std::string handle_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
+        void handle_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
 
     private:
         bool is_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd);
-        std::string handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd);
+        void handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd);
 
         bool external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd);
         void validate_external_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);

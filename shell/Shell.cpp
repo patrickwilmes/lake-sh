@@ -13,10 +13,6 @@
 
 using namespace LakeShell;
 
-static const std::string EXIT_KWD = "exit";
-constexpr int CTRL_L_KEY = 12;
-constexpr int ENTER_KEY = 10;
-
 constexpr int HISTORY_SIZE = 256;
 
 volatile sig_atomic_t Shell::m_jump_active = 0;
@@ -30,6 +26,7 @@ Shell::Shell()
     , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
 {
     m_shell_context->refresh();
+    m_shell_context->load_shell_profile();
 }
 
 void Shell::run()

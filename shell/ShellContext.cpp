@@ -69,6 +69,13 @@ void LakeShell::ShellContext::load_shell_profile()
 {
     auto user_home = get_user_home();
     auto profile = user_home + "/" + LAKE_SHELL_PROFILE;
+
+#ifdef SHELL_DEBUG
+    auto alternative_profile = get_working_dir() + "/" + LAKE_SHELL_PROFILE;
+    if (std::filesystem::exists(alternative_profile))
+        profile = alternative_profile;
+#endif
+
     if (!std::filesystem::exists(profile)) {
         return;
     }
