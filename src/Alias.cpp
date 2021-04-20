@@ -1,4 +1,5 @@
 #include "Alias.hpp"
+#include <stdexcept>
 
 void LakeShell::AliasContainer::add(std::string name, std::string origin)
 {
@@ -16,7 +17,7 @@ bool LakeShell::AliasContainer::exists(std::string& name)
 std::string LakeShell::AliasContainer::get_origin(std::string& name)
 {
     if (!exists(name)) {
-        return ""; // todo - raise an exception in this case
+        throw std::runtime_error("alias doesn't exist!");
     }
     return m_aliases.at(name);
 }
