@@ -13,8 +13,6 @@
 
 using namespace LakeShell;
 
-constexpr int HISTORY_SIZE = 256;
-
 volatile sig_atomic_t Shell::m_jump_active = 0;
 sigjmp_buf Shell::m_env;
 
@@ -22,7 +20,6 @@ std::vector<std::shared_ptr<LakeShell::Cmd::Command>> process_input(std::string&
 
 Shell::Shell()
     : m_shell_context(std::make_shared<ShellContext>())
-    , m_history(History(HISTORY_SIZE))
     , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
 {
     m_shell_context->refresh();

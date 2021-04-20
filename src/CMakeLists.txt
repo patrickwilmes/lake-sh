@@ -17,9 +17,6 @@ set(SRC
         utils/Utils.cpp
         utils/Utils.hpp
 
-        History.cpp
-        History.hpp
-
         ShellContext.cpp
         ShellContext.hpp
 
@@ -35,8 +32,6 @@ set(SRC
         Executor.cpp
         Executor.hpp
 
-        Input.cpp
-        Input.hpp
         )
 
 add_executable(lsh main.cpp ${SRC})

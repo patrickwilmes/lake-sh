@@ -3,7 +3,6 @@
 
 #include "Alias.hpp"
 #include "CmdHandler.hpp"
-#include "History.hpp"
 #include "ShellContext.hpp"
 #include <csetjmp>
 #include <csignal>
@@ -26,7 +25,6 @@ namespace LakeShell {
         static sigjmp_buf m_env;
         static volatile sig_atomic_t m_jump_active;
         std::shared_ptr<ShellContext> m_shell_context;
-        History m_history;
         CommandHandler m_cmd_handler;
     };
 } // namespace LakeShell
