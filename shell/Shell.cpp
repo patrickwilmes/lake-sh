@@ -44,7 +44,6 @@ void Shell::run()
 
         auto p = prompt();
         char * line = readline(p.c_str());
-        add_history(line);
         std::string input(line);
         if (input == "exit") {
             break;
@@ -56,6 +55,7 @@ void Shell::run()
             auto cmds = LakeShell::Assembler::assemble_commands(tokens);
             try {
                 m_cmd_handler.handle_commands(cmds);
+                add_history(line);
             }  catch (LakeShell::Cmd::CommandNotFoundException &e) {
                 std::cout << "command not found: " << e.what() << '\n' << std::flush;
             } catch (LakeShell::Cmd::InvalidCommandException &e) {
