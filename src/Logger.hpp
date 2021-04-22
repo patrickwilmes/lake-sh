@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <string>
 
+// TODO: use templating and variadic arguments
 namespace LakeShell {
     template<typename T>
     void dbg(T t)
