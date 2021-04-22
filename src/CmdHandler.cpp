@@ -110,7 +110,7 @@ void LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr<LakeSh
         was_executed = true;
     }
     if (!was_executed)
-        throw CommandNotFoundException(cmd_name.c_str());
+        throw CommandNotFoundException(cmd_name);
 }
 
 bool LakeShell::Cmd::CommandHandler::external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd)
@@ -125,7 +125,7 @@ void LakeShell::Cmd::CommandHandler::validate_external_commands(std::vector<std:
 {
     for (auto& cmd : cmds) {
         if (!external_cmd_exists(cmd)) {
-            throw CommandNotFoundException(cmd->get_name().c_str());
+            throw CommandNotFoundException(cmd->get_name());
         }
     }
 }

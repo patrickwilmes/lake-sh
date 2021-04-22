@@ -25,18 +25,18 @@ namespace LakeShell::Cmd {
 
     class CommandNotFoundException : public std::exception {
     public:
-        explicit CommandNotFoundException(const char* name)
+        explicit CommandNotFoundException(std::string name)
             : std::exception()
             , m_name(name)
         {
         }
         [[nodiscard]] const char* what() const noexcept override
         {
-            return m_name;
+            return m_name.c_str();
         }
 
     private:
-        const char* m_name;
+        std::string m_name;
     };
 
     class Command final {
