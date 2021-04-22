@@ -83,7 +83,6 @@ void LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr<LakeSh
         was_executed = true;
     } else if (cmd_name == ALIAS) {
         cmd->ensure_has_args(2);
-        LakeShell::dbg("printing shit", args[0], args[1]);
         m_shell_context->add_alias(args[0], args[1]);
         was_executed = true;
     } else if (cmd_name == EXPORT) {
