@@ -1,16 +1,77 @@
 #include "Parser.hpp"
+
 #include "utils/Utils.hpp"
+#include <utility>
 
 using namespace LakeShell::Cmd;
 
-std::vector<std::string> tokenize(std::string& line);
+
+class Tokenizer final {
+public:
+    explicit Tokenizer(std::string line)
+        : m_line(std::move(line))
+    {
+    }
+
+    std::vector<std::string> tokenize()
+    {
+        do {
+            if (peek() == ' ') {
+                consume();
+                walk(2);
+                continue;
+            } else if (peek() == '=') {
+                consume();
+                walk();
+                if (peek() == '"') {
+                    walk();
+                }
+            } else if (peek() == '"') {
+                consume();
+                walk(2);
+            }
+            if (m_line[m_pos] != '"')
+                m_current_token += m_line[m_pos];
+            walk();
+        } while (m_pos < m_line.length());
+        consume();
+        return m_tokens;
+    }
+
+private:
+    void walk(uint32_t step = 1)
+    {
+        m_pos += step;
+    }
+
+    void consume()
+    {
+        if (m_pos < m_line.length())
+            m_current_token += m_line[m_pos];
+        if (m_current_token[0] != '\0')
+            m_tokens.emplace_back(m_current_token);
+        m_current_token = "";
+    }
+
+    char peek(uint32_t step = 1)
+    {
+        return m_line[m_pos + step];
+    }
+
+private:
+    uint32_t m_pos = 0;
+    std::string m_current_token;
+    std::string m_line;
+    std::vector<std::string> m_tokens;
+};
 
 void parse_cmd(std::vector<std::string>& tokens, uint32_t& parse_pos, std::vector<std::shared_ptr<Command>>& cmds);
 void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, std::shared_ptr<Command> cmd);
 
-std::vector<std::shared_ptr<LakeShell::Cmd::Command>> LakeShell::Parser::parse_input(std::string &input)
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> LakeShell::Parser::parse_input(std::string& input)
 {
-    auto tokens = tokenize(input);
+    Tokenizer tokenizer(std::move(input));
+    auto  tokens = tokenizer.tokenize();
     if (tokens.empty()) {
         return std::vector<std::shared_ptr<Command>>();
     }
@@ -41,35 +102,4 @@ void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, std::share
     cmd->add_arg(tokens[parse_pos]);
     parse_pos++;
     parse_arg(tokens, parse_pos, cmd);
-}
-std::vector<std::string> tokenize(std::string& line)
-{
-    std::vector<std::string> tokens;
-    const uint32_t origin_len = line.length();
-    const std::string std_delim = " ";
-
-    size_t pos;
-    std::string token;
-
-    while ((pos = line.find(std_delim)) != std::string::npos) {
-        trim(line);
-        if (line[0] != '"') {
-            size_t sdelim_pos = line.find('=');
-            if (sdelim_pos < pos) {
-                token = line.substr(0, sdelim_pos);
-                line.erase(0, sdelim_pos + 1);
-            } else {
-                token = line.substr(0, pos);
-                line.erase(0, pos + 1);
-            }
-        } else {
-            size_t end_pos = line.find('"', 1);
-            token = line.substr(1, end_pos - 1);
-            line.erase(0, end_pos);
-        }
-        tokens.push_back(token);
-    }
-    if (line.length() > 2 || line.length() == origin_len || line == "..")
-        tokens.push_back(line);
-    return tokens;
 }
