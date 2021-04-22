@@ -1,10 +1,8 @@
 #include "Parser.hpp"
 
-#include "utils/Utils.hpp"
 #include <utility>
 
 using namespace LakeShell::Cmd;
-
 
 class Tokenizer final {
 public:
@@ -71,7 +69,7 @@ void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, std::share
 std::vector<std::shared_ptr<LakeShell::Cmd::Command>> LakeShell::Parser::parse_input(std::string& input)
 {
     Tokenizer tokenizer(std::move(input));
-    auto  tokens = tokenizer.tokenize();
+    auto tokens = tokenizer.tokenize();
     if (tokens.empty()) {
         return std::vector<std::shared_ptr<Command>>();
     }
