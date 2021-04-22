@@ -1,8 +1,11 @@
 #include "Executor.hpp"
+#include "User.hpp"
 #include <filesystem>
+#include <iostream>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
+#include <cassert>
 
 LakeShell::PipedExecutor::PipedExecutor(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
     : m_cmds(std::move(cmds))
@@ -110,4 +113,72 @@ std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vecto
         return std::make_shared<LakeShell::Executor>(commands.front());
     }
     return std::make_shared<LakeShell::PipedExecutor>(commands);
+}
+
+std::string LakeShell::OwnCommandExecutor::execute()
+{
+    bool was_executed = false;
+    auto cmd_name = m_cmd->get_name();
+    auto args = m_cmd->get_args();
+    if (cmd_name == PWD) {
+        m_cmd->ensure_has_args(0);
+        std::string wd = LakeShell::User::current_wd();
+        std::cout << wd << '\n'
+                  << std::flush;
+        was_executed = true;
+    } else if (cmd_name == CD) {
+        if (args.empty()) {
+            std::string usr_home = LakeShell::User::usr_home_dir();
+            chdir(usr_home.c_str());
+        } else {
+            m_cmd->ensure_has_args(1);
+            auto resolve_path = [](std::string& origin_path) {
+                std::string wd = LakeShell::User::current_wd();
+                if (origin_path == "..") {
+                    return wd.substr(0, wd.rfind('/'));
+                } else if ((origin_path[0] != '.' && origin_path[0] != '/') || (origin_path[0] == '.' && origin_path[1] == '/')) {
+                    return wd + "/" + origin_path;
+                }
+                assert(origin_path[0] == '/');
+                return origin_path;
+            };
+            std::string path_string = resolve_path(args[0]);
+            chdir(path_string.c_str());
+        }
+        was_executed = true;
+    } else if (cmd_name == ALIAS) {
+        m_cmd->ensure_has_args(2);
+        m_shell_context->add_alias(args[0], args[1]);
+        was_executed = true;
+    } else if (cmd_name == EXPORT) {
+        m_cmd->ensure_has_args(2);
+        std::string arg = args[0];
+        auto key = args[0].c_str();
+        auto value = args[1].c_str();
+        setenv(key, value, true);
+        was_executed = true;
+    } else if (cmd_name == UNEXPORT) {
+        m_cmd->ensure_has_args(1);
+        std::string arg = args[0];
+        unsetenv(arg.c_str());
+        was_executed = true;
+    } else if (cmd_name == ECHO) {
+        m_cmd->ensure_has_args(1);
+        std::string arg = args[0];
+        if (arg[0] == '$') {
+            auto key = arg.substr(1, arg.length());
+            std::string value(getenv(key.c_str()));
+            arg = value;
+        }
+        std::cout << arg << '\n' << std::flush;
+        was_executed = true;
+    }
+    if (!was_executed)
+        throw LakeShell::Cmd::CommandNotFoundException(cmd_name);
+    return "";
+}
+
+LakeShell::OwnCommandExecutor::OwnCommandExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd, std::shared_ptr<LakeShell::ShellContext> shell_context)
+    : m_cmd(std::move(cmd)), m_shell_context(std::move(shell_context))
+{
 }
