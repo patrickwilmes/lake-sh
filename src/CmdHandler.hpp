@@ -11,14 +11,12 @@ namespace LakeShell::Cmd {
     class CommandHandler final {
     public:
         explicit CommandHandler(std::shared_ptr<ShellContext>& shell_context);
-        void handle_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
+        void handle_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds);
 
     private:
-        bool is_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd);
-        void handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd);
 
-        bool external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd);
-        void validate_external_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
+        bool external_cmd_exists(const std::shared_ptr<LakeShell::Cmd::Command>& cmd);
+        void validate_external_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds);
 
         void index_path();
         std::vector<std::shared_ptr<LakeShell::Cmd::Command>> resolve_aliased_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
@@ -26,15 +24,6 @@ namespace LakeShell::Cmd {
     private:
         std::vector<std::string> m_available_commands;
         std::shared_ptr<ShellContext> m_shell_context;
-        static constexpr std::string_view PWD = "pwd";
-        static constexpr std::string_view CD = "cd";
-        static constexpr std::string_view ALIAS = "alias";
-        static constexpr std::string_view EXPORT = "export";
-        static constexpr std::string_view UNEXPORT = "unexport";
-        static constexpr std::string_view ECHO = "echo";
-        const std::vector<std::string_view> m_own_cmds = {
-            PWD, CD, ALIAS, EXPORT, UNEXPORT, ECHO
-        };
     };
 }
 

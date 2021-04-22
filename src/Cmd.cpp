@@ -28,7 +28,13 @@ std::vector<std::string> LakeShell::Cmd::Command::get_args()
 {
     return m_args;
 }
+
 uint32_t LakeShell::Cmd::Command::arg_count()
 {
     return m_args.size();
+}
+
+bool LakeShell::Cmd::Command::is_internal_command()
+{
+    return std::find(m_own_cmds.begin(), m_own_cmds.end(), get_name()) != m_own_cmds.end();
 }

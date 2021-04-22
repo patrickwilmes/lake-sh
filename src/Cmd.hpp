@@ -47,8 +47,18 @@ namespace LakeShell::Cmd {
         std::string get_name();
         std::vector<std::string> get_args();
         uint32_t arg_count();
+        bool is_internal_command();
 
     private:
+        static constexpr std::string_view PWD = "pwd";
+        static constexpr std::string_view CD = "cd";
+        static constexpr std::string_view ALIAS = "alias";
+        static constexpr std::string_view EXPORT = "export";
+        static constexpr std::string_view UNEXPORT = "unexport";
+        static constexpr std::string_view ECHO = "echo";
+        const std::vector<std::string_view> m_own_cmds = {
+            PWD, CD, ALIAS, EXPORT, UNEXPORT, ECHO
+        };
         const std::string m_name;
         std::vector<std::string> m_args;
     };

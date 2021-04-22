@@ -12,29 +12,11 @@
 
 using namespace LakeShell;
 
-void LakeShell::Cmd::CommandHandler::handle_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
+void LakeShell::Cmd::CommandHandler::handle_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds)
 {
-    auto copy_if_is_external_cmd = [&](const std::shared_ptr<LakeShell::Cmd::Command>& cmd) {
-        return !is_own_cmd(cmd);
-    };
-
-    bool was_handled = false;
-
-    for (auto& cmd : cmds) {
-        if (is_own_cmd(cmd)) {
-            handle_own_cmd(cmd);
-            was_handled = true;
-        }
-    }
-    if (was_handled) {
-        return;
-    }
-
-    std::vector<std::shared_ptr<LakeShell::Cmd::Command>> extern_cmds;
-    std::copy_if(cmds.begin(), cmds.end(), std::back_inserter(extern_cmds), copy_if_is_external_cmd);
     validate_external_commands(cmds);
-    auto resolved_cmds = resolve_aliased_commands(cmds);
-    LakeShell::create_executor(cmds)->execute();
+//    auto resolved_cmds = resolve_aliased_commands(cmds);
+    LakeShell::create_executor(cmds, m_shell_context)->execute();
 }
 
 LakeShell::Cmd::CommandHandler::CommandHandler(std::shared_ptr<ShellContext>& shell_context)
@@ -43,18 +25,7 @@ LakeShell::Cmd::CommandHandler::CommandHandler(std::shared_ptr<ShellContext>& sh
     index_path();
 }
 
-bool LakeShell::Cmd::CommandHandler::is_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd)
-{
-    return std::find(m_own_cmds.begin(), m_own_cmds.end(), cmd->get_name()) != m_own_cmds.end();
-}
-
-void LakeShell::Cmd::CommandHandler::handle_own_cmd(const std::shared_ptr<LakeShell::Cmd::Command>& cmd)
-{
-    OwnCommandExecutor executor(cmd, m_shell_context);
-    executor.execute();
-}
-
-bool LakeShell::Cmd::CommandHandler::external_cmd_exists(std::shared_ptr<LakeShell::Cmd::Command> cmd)
+bool LakeShell::Cmd::CommandHandler::external_cmd_exists(const std::shared_ptr<LakeShell::Cmd::Command>& cmd)
 {
     auto name = cmd->get_name();
     bool exists_in_path = std::find(m_available_commands.begin(), m_available_commands.end(), name) != m_available_commands.end();
@@ -62,10 +33,10 @@ bool LakeShell::Cmd::CommandHandler::external_cmd_exists(std::shared_ptr<LakeShe
     return exists_in_path || is_alias;
 }
 
-void LakeShell::Cmd::CommandHandler::validate_external_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
+void LakeShell::Cmd::CommandHandler::validate_external_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds)
 {
     for (auto& cmd : cmds) {
-        if (!external_cmd_exists(cmd)) {
+        if (!external_cmd_exists(cmd) && !cmd->is_internal_command()) {
             throw CommandNotFoundException(cmd->get_name());
         }
     }

@@ -107,10 +107,13 @@ LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd)
 {
 }
 
-std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& commands)
+std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& commands, const std::shared_ptr<LakeShell::ShellContext> &ctx)
 {
     if (commands.size() == 1) {
-        return std::make_shared<LakeShell::Executor>(commands.front());
+        auto cmd = commands.front();
+        if (cmd->is_internal_command())
+            return std::make_shared<LakeShell::OwnCommandExecutor>(cmd, ctx);
+        return std::make_shared<LakeShell::Executor>(cmd);
     }
     return std::make_shared<LakeShell::PipedExecutor>(commands);
 }

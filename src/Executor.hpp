@@ -50,7 +50,7 @@ namespace LakeShell {
         const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> m_cmds;
     };
 
-    std::shared_ptr<Executor> create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> &commands);
+    std::shared_ptr<Executor> create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> &commands, const std::shared_ptr<LakeShell::ShellContext> &ctx);
 }
 
 #endif //LAKE_SH_EXECUTOR_HPP
