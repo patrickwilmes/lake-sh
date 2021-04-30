@@ -20,6 +20,14 @@ namespace LakeShell {
         std::shared_ptr<LakeShell::Cmd::Command> m_cmd;
     };
 
+    class SimpleExecutor final : public Executor {
+    public:
+        explicit SimpleExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd);
+        virtual std::string execute() override;
+    private:
+        std::shared_ptr<LakeShell::Cmd::Command> m_cmd;
+    };
+
     class OwnCommandExecutor final : public Executor {
     public:
         OwnCommandExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd, std::shared_ptr<LakeShell::ShellContext> shell_context);

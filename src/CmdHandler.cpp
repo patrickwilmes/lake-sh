@@ -15,7 +15,7 @@ using namespace LakeShell;
 void LakeShell::Cmd::CommandHandler::handle_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds)
 {
     validate_external_commands(cmds);
-//    auto resolved_cmds = resolve_aliased_commands(cmds);
+    auto resolved_cmds = resolve_aliased_commands(cmds);
     LakeShell::create_executor(cmds, m_shell_context)->execute();
 }
 

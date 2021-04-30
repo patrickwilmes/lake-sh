@@ -45,9 +45,11 @@ namespace LakeShell::Cmd {
         void add_arg(const std::string& arg);
         void ensure_has_args(const uint32_t expected_number);
         std::string get_name();
+        std::string assemble_alias();
         std::vector<std::string> get_args();
         uint32_t arg_count();
         bool is_internal_command();
+        bool is_non_parallel_command();
 
     private:
         static constexpr std::string_view PWD = "pwd";

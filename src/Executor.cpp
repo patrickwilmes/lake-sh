@@ -1,11 +1,11 @@
 #include "Executor.hpp"
 #include "User.hpp"
+#include <cassert>
 #include <filesystem>
 #include <iostream>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
-#include <cassert>
 
 LakeShell::PipedExecutor::PipedExecutor(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
     : m_cmds(std::move(cmds))
@@ -27,6 +27,7 @@ std::string LakeShell::PipedExecutor::execute()
     return data;
 }
 
+//TODO: pass cmd as const ref
 int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Command> cmd, int input, bool is_first, bool is_last)
 {
     int pid;
@@ -107,12 +108,14 @@ LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd)
 {
 }
 
-std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& commands, const std::shared_ptr<LakeShell::ShellContext> &ctx)
+std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& commands, const std::shared_ptr<LakeShell::ShellContext>& ctx)
 {
     if (commands.size() == 1) {
         auto cmd = commands.front();
         if (cmd->is_internal_command())
             return std::make_shared<LakeShell::OwnCommandExecutor>(cmd, ctx);
+        if (cmd->is_non_parallel_command())
+            return std::make_shared<LakeShell::SimpleExecutor>(cmd);
         return std::make_shared<LakeShell::Executor>(cmd);
     }
     return std::make_shared<LakeShell::PipedExecutor>(commands);
@@ -150,8 +153,9 @@ std::string LakeShell::OwnCommandExecutor::execute()
         }
         was_executed = true;
     } else if (cmd_name == ALIAS) {
-        m_cmd->ensure_has_args(2);
-        m_shell_context->add_alias(args[0], args[1]);
+        printf("Assembled arg: %s\n", m_cmd->assemble_alias().c_str());
+        m_cmd->ensure_has_args(3);
+        m_shell_context->add_alias(args[0], m_cmd->assemble_alias());
         was_executed = true;
     } else if (cmd_name == EXPORT) {
         m_cmd->ensure_has_args(2);
@@ -173,7 +177,8 @@ std::string LakeShell::OwnCommandExecutor::execute()
             std::string value(getenv(key.c_str()));
             arg = value;
         }
-        std::cout << arg << '\n' << std::flush;
+        std::cout << arg << '\n'
+                  << std::flush;
         was_executed = true;
     }
     if (!was_executed)
@@ -182,6 +187,37 @@ std::string LakeShell::OwnCommandExecutor::execute()
 }
 
 LakeShell::OwnCommandExecutor::OwnCommandExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd, std::shared_ptr<LakeShell::ShellContext> shell_context)
-    : m_cmd(std::move(cmd)), m_shell_context(std::move(shell_context))
+    : m_cmd(std::move(cmd))
+    , m_shell_context(std::move(shell_context))
 {
+}
+
+LakeShell::SimpleExecutor::SimpleExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd)
+    : Executor(std::move(cmd))
+    , m_cmd(std::move(cmd))
+{
+}
+
+std::string LakeShell::SimpleExecutor::execute()
+{
+    auto cmd_name = m_cmd->get_name();
+    const char* c = cmd_name.c_str();
+    if (m_cmd->arg_count() == 0) {
+        char* arg[2];
+        arg[0] = const_cast<char*>(c);
+        arg[1] = nullptr;
+        execvp(c, arg);
+        return "";
+    }
+
+    char* args[m_cmd->arg_count() + 2];
+    args[0] = const_cast<char*>(c);
+    int i = 1;
+    for (auto& arg : m_cmd->get_args()) {
+        args[i] = const_cast<char*>(arg.c_str());
+        i++;
+    }
+    args[i] = nullptr;
+    execvp(c, args);
+    return "";
 }
