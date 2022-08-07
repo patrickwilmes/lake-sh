@@ -7,6 +7,7 @@
 #include <csetjmp>
 #include <csignal>
 #include <memory>
+#include "Prompt.hpp"
 
 namespace LakeShell {
     using namespace LakeShell::Cmd;
@@ -26,6 +27,7 @@ namespace LakeShell {
         static volatile sig_atomic_t m_jump_active;
         std::shared_ptr<ShellContext> m_shell_context;
         CommandHandler m_cmd_handler;
+        Prompt m_prompt;
     };
 } // namespace LakeShell
 

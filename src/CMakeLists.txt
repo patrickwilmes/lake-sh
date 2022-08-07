@@ -29,6 +29,8 @@ set(SRC
         Executor.cpp
         Executor.hpp
 
+        Prompt.hpp
+        Prompt.cpp
         )
 
 add_executable(lsh main.cpp ${SRC})

@@ -4,7 +4,6 @@
 #include "Parser.hpp"
 #include "utils/Utils.hpp"
 #include <iostream>
-#include <memory>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <string>
@@ -18,6 +17,7 @@ sigjmp_buf Shell::m_env;
 Shell::Shell()
     : m_shell_context(std::make_shared<ShellContext>())
     , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
+    , m_prompt(Prompt(m_shell_context))
 {
     m_shell_context->refresh();
     m_shell_context->load_shell_profile();
@@ -33,7 +33,7 @@ void Shell::run()
         }
         Shell::set_jump_active();
 
-        auto p = prompt();
+        auto p = m_prompt.render_prompt();
         char* line = readline(p.c_str());
         std::string input(line);
         if (input == "exit") {
@@ -71,19 +71,6 @@ void Shell::sigint_handler(int signo)
         return;
     }
     siglongjmp(m_env, 42);
-}
-
-std::string Shell::prompt()
-{
-    std::string prompt = m_shell_context->get_username();
-    auto user_home = m_shell_context->get_user_home();
-    auto wd = m_shell_context->get_working_dir();
-    if (wd.length() > user_home.length()) {
-        prompt += " @ ~" + wd.substr(user_home.length(), wd.length() - 1);
-    } else {
-        prompt += " @ " + m_shell_context->get_working_dir();
-    }
-    return prompt + " >> ";
 }
 
 void Shell::setup_sig_handling()
