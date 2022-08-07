@@ -23,7 +23,7 @@ void LakeShell::ShellContext::refresh()
     m_is_git = std::filesystem::exists(".git");
     std::filesystem::path path = m_current_wd;
     if (!m_is_git) {
-        while (path != m_user_home) {
+        while (path != m_user_home && path != "/") {
             auto parent_git_path = path.append(".git");
             if (std::filesystem::exists(parent_git_path)) {
                 m_is_git = true;

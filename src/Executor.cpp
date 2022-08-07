@@ -141,7 +141,8 @@ std::string LakeShell::OwnCommandExecutor::execute()
             auto resolve_path = [](std::string& origin_path) {
                 std::string wd = LakeShell::User::current_wd();
                 if (origin_path == "..") {
-                    return wd.substr(0, wd.rfind('/'));
+                    std::filesystem::path opath = origin_path;
+                    return opath.string();
                 } else if ((origin_path[0] != '.' && origin_path[0] != '/') || (origin_path[0] == '.' && origin_path[1] == '/')) {
                     return wd + "/" + origin_path;
                 }
