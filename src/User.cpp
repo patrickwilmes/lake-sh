@@ -5,8 +5,12 @@
 
 std::string LakeShell::User::get_user_name()
 {
+#ifndef WSL_COMPATIBILITY_MODE
     char* user = getlogin();
     return std::string(user);
+#else
+    return "wsl";
+#endif
 }
 
 std::string LakeShell::User::current_wd()
