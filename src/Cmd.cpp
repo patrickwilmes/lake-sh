@@ -5,6 +5,11 @@
 LakeShell::Cmd::Command::Command(std::string name)
     : m_name(std::move(name))
 {
+    // correcting cd.. to cd ..
+    if (m_name.starts_with("cd") && m_name.ends_with("..")) {
+        m_name = "cd";
+        add_arg("..");
+    }
 }
 
 void LakeShell::Cmd::Command::add_arg(const std::string& arg)

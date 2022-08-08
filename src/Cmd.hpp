@@ -61,7 +61,7 @@ namespace LakeShell::Cmd {
         const std::vector<std::string_view> m_own_cmds = {
             PWD, CD, ALIAS, EXPORT, UNEXPORT, ECHO
         };
-        const std::string m_name;
+        std::string m_name;
         std::vector<std::string> m_args;
     };
 }
