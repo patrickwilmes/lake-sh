@@ -46,18 +46,21 @@ void LakeShell::Cmd::CommandHandler::index_path()
 {
     std::string path(getenv("PATH"));
     const std::string delim = ":";
-
     size_t pos;
     std::string token;
+
     //TODO: this could maybe be done in parallel
-#ifndef WSL_COMPATIBILITY_MODE
     while ((pos = path.find(delim)) != std::string::npos) {
         token = path.substr(0, pos);
-        for (const auto& entry : std::filesystem::directory_iterator(token))
+        if (token.starts_with("/mnt")) {
+            path.erase(0, pos + delim.length());
+            continue;
+        }
+        for (const auto& entry : std::filesystem::directory_iterator(token)) {
             m_available_commands.push_back(entry.path().filename().string());
+        }
         path.erase(0, pos + delim.length());
     }
-#endif
 }
 
 std::vector<std::shared_ptr<LakeShell::Cmd::Command>> Cmd::CommandHandler::resolve_aliased_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
