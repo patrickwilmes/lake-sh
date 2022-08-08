@@ -11,7 +11,7 @@ namespace LakeShell::Cmd {
     class CommandHandler final {
     public:
         explicit CommandHandler(std::shared_ptr<ShellContext>& shell_context);
-        void handle_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds);
+        void handle_commands(const std::shared_ptr<LakeShell::Cmd::CommandContainer>& cmd_container);
 
     private:
 

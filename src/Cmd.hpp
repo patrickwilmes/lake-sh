@@ -4,6 +4,7 @@
 #include <cstring>
 #include <exception>
 #include <string>
+#include <memory>
 #include <vector>
 
 namespace LakeShell::Cmd {
@@ -64,6 +65,21 @@ namespace LakeShell::Cmd {
         std::string m_name;
         std::vector<std::string> m_args;
     };
+
+    class CommandContainer final {
+    public:
+    	CommandContainer() = default;
+        CommandContainer(const std::vector<std::shared_ptr<Command>> cmds, bool is_piped, bool is_concat);
+        bool is_piped();
+        bool is_concat();
+        bool is_regular();
+        std::vector<std::shared_ptr<Command>> get_commands();
+    private:
+        std::vector<std::shared_ptr<Command>> m_cmds;
+        bool m_is_piped;
+        bool m_is_concat;
+    };
+
 }
 
 #endif //LAKE_SH_CMD_HPP

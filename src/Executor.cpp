@@ -119,6 +119,13 @@ std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vecto
     return std::make_shared<LakeShell::PipedExecutor>(commands);
 }
 
+std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::shared_ptr<LakeShell::Cmd::Command>& command, const std::shared_ptr<LakeShell::ShellContext>& ctx)
+{
+    if (command->is_internal_command())
+        return std::make_shared<LakeShell::OwnCommandExecutor>(command, ctx);
+    return std::make_shared<LakeShell::Executor>(command);
+}
+
 std::string LakeShell::OwnCommandExecutor::execute()
 {
     bool was_executed = false;

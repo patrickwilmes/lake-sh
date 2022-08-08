@@ -12,14 +12,28 @@
 
 using namespace LakeShell;
 
-void LakeShell::Cmd::CommandHandler::handle_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds)
+void LakeShell::Cmd::CommandHandler::handle_commands(const std::shared_ptr<LakeShell::Cmd::CommandContainer>& cmd_container)
 {
-    validate_external_commands(cmds);
-    auto resolved_cmds = resolve_aliased_commands(cmds);
-    if (!resolved_cmds.empty())
+    validate_external_commands(cmd_container->get_commands());
+    auto resolved_cmds = resolve_aliased_commands(cmd_container->get_commands());
+    if (!resolved_cmds.empty()) {
         LakeShell::create_executor(resolved_cmds, m_shell_context)->execute();
-    else
-        LakeShell::create_executor(cmds, m_shell_context)->execute();
+        if (cmd_container->is_concat()) {
+            for (auto cmd : resolved_cmds) {
+                LakeShell::create_executor(cmd, m_shell_context)->execute();
+            }
+        } else {
+            LakeShell::create_executor(resolved_cmds, m_shell_context)->execute();
+        }
+    } else {
+        if (cmd_container->is_concat()) {
+            for (auto cmd : cmd_container->get_commands()) {
+                LakeShell::create_executor(cmd, m_shell_context)->execute();
+            }
+        } else {
+            LakeShell::create_executor(cmd_container->get_commands(), m_shell_context)->execute();
+        }
+    }
 }
 
 LakeShell::Cmd::CommandHandler::CommandHandler(std::shared_ptr<ShellContext>& shell_context)
@@ -74,7 +88,7 @@ std::vector<std::shared_ptr<LakeShell::Cmd::Command>> Cmd::CommandHandler::resol
         if (m_shell_context->alias_exists(cmd_name)) {
             auto assoc_cmd = m_shell_context->get_origin_of_alias(cmd_name);
             auto result = LakeShell::Parser::parse_input(assoc_cmd);
-            for (auto& r : result) {
+            for (auto& r : result->get_commands()) {
                 resolved_cmds.push_back(r);
             }
         } else {

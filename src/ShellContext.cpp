@@ -92,7 +92,7 @@ void LakeShell::ShellContext::load_shell_profile()
     std::string line;
     while (std::getline(infile, line)) {
         auto cmds = parse_input(line);
-        for (auto& cmd : cmds) {
+        for (auto& cmd : cmds->get_commands()) {
             if (cmd->get_name() == "alias") {
                 cmd->ensure_has_args(2);
                 auto alias = cmd->get_args()[0];

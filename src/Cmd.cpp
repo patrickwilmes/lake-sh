@@ -61,3 +61,28 @@ bool LakeShell::Cmd::Command::is_non_parallel_command()
 {
     return get_name() != "ls";
 }
+
+LakeShell::Cmd::CommandContainer::CommandContainer(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds, bool is_piped, bool is_concat)
+    : m_cmds(cmds), m_is_piped(is_piped), m_is_concat(is_concat)
+{
+}
+
+bool LakeShell::Cmd::CommandContainer::is_piped()
+{
+    return m_is_piped;
+}
+
+bool LakeShell::Cmd::CommandContainer::is_concat()
+{
+    return m_is_concat;
+}
+
+bool LakeShell::Cmd::CommandContainer::is_regular()
+{
+    return !is_concat() && !is_piped();
+}
+
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> LakeShell::Cmd::CommandContainer::get_commands()
+{
+    return m_cmds;
+}

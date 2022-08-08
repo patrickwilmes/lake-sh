@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace LakeShell::Parser {
-    std::vector<std::shared_ptr<LakeShell::Cmd::Command>> parse_input(std::string &input);
+    std::shared_ptr<LakeShell::Cmd::CommandContainer> parse_input(std::string &input);
 }
 
 #endif
