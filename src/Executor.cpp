@@ -114,8 +114,6 @@ std::shared_ptr<LakeShell::Executor> LakeShell::create_executor(const std::vecto
         auto cmd = commands.front();
         if (cmd->is_internal_command())
             return std::make_shared<LakeShell::OwnCommandExecutor>(cmd, ctx);
-        if (cmd->is_non_parallel_command())
-            return std::make_shared<LakeShell::SimpleExecutor>(cmd);
         return std::make_shared<LakeShell::Executor>(cmd);
     }
     return std::make_shared<LakeShell::PipedExecutor>(commands);
@@ -191,34 +189,4 @@ LakeShell::OwnCommandExecutor::OwnCommandExecutor(std::shared_ptr<LakeShell::Cmd
     : m_cmd(std::move(cmd))
     , m_shell_context(std::move(shell_context))
 {
-}
-
-LakeShell::SimpleExecutor::SimpleExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd)
-    : Executor(std::move(cmd))
-    , m_cmd(std::move(cmd))
-{
-}
-
-std::string LakeShell::SimpleExecutor::execute()
-{
-    auto cmd_name = m_cmd->get_name();
-    const char* c = cmd_name.c_str();
-    if (m_cmd->arg_count() == 0) {
-        char* arg[2];
-        arg[0] = const_cast<char*>(c);
-        arg[1] = nullptr;
-        execvp(c, arg);
-        return "";
-    }
-
-    char* args[m_cmd->arg_count() + 2];
-    args[0] = const_cast<char*>(c);
-    int i = 1;
-    for (auto& arg : m_cmd->get_args()) {
-        args[i] = const_cast<char*>(arg.c_str());
-        i++;
-    }
-    args[i] = nullptr;
-    execvp(c, args);
-    return "";
 }

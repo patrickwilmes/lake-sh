@@ -59,5 +59,5 @@ std::string LakeShell::Cmd::Command::assemble_alias()
 
 bool LakeShell::Cmd::Command::is_non_parallel_command()
 {
-    return m_name != "ls";
+    return get_name() != "ls";
 }
