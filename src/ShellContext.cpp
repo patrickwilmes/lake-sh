@@ -97,6 +97,8 @@ void LakeShell::ShellContext::load_shell_profile()
                 cmd->ensure_has_args(2);
                 auto alias = cmd->get_args()[0];
                 auto origin = cmd->get_args()[1];
+                if (origin.starts_with("="))
+                    origin.erase(0, 1);
                 add_alias(alias, origin);
             }
         }

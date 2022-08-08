@@ -16,7 +16,10 @@ void LakeShell::Cmd::CommandHandler::handle_commands(const std::vector<std::shar
 {
     validate_external_commands(cmds);
     auto resolved_cmds = resolve_aliased_commands(cmds);
-    LakeShell::create_executor(cmds, m_shell_context)->execute();
+    if (!resolved_cmds.empty())
+        LakeShell::create_executor(resolved_cmds, m_shell_context)->execute();
+    else
+        LakeShell::create_executor(cmds, m_shell_context)->execute();
 }
 
 LakeShell::Cmd::CommandHandler::CommandHandler(std::shared_ptr<ShellContext>& shell_context)
