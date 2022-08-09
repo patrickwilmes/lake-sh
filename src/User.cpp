@@ -6,6 +6,7 @@
 std::string LakeShell::User::get_user_name()
 {
 #ifndef WSL_COMPATIBILITY_MODE
+    // GitHub Issue regarding WSL getlogin issue https://github.com/microsoft/WSL/issues/888
     char* user = getlogin();
     return std::string(user);
 #else
