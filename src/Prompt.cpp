@@ -19,5 +19,5 @@ std::string Prompt::render_prompt()
     if (m_shell_context->is_git_dir()) {
         prompt += spaced(red("git"));
     }
-    return prompt + " >> ";
+    return prompt + " >>\n% ";
 }
