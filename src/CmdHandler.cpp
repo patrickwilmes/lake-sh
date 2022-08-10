@@ -17,7 +17,6 @@ void LakeShell::Cmd::CommandHandler::handle_commands(const std::shared_ptr<LakeS
     validate_external_commands(cmd_container->get_commands());
     auto resolved_cmds = resolve_aliased_commands(cmd_container->get_commands());
     if (!resolved_cmds.empty()) {
-        LakeShell::create_executor(resolved_cmds, m_shell_context)->execute();
         if (cmd_container->is_concat()) {
             for (auto cmd : resolved_cmds) {
                 LakeShell::create_executor(cmd, m_shell_context)->execute();
