@@ -1,4 +1,5 @@
 #include "Cmd.hpp"
+#include <algorithm>
 
 #include <utility>
 

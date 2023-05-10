@@ -2,6 +2,7 @@
 #define LC3_VM_UTILS_HPP
 
 #include <filesystem>
+#include <algorithm>
 #include <string>
 #include <vector>
 
