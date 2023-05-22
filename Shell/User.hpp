@@ -5,8 +5,6 @@
 
 namespace LakeShell::User {
 
-    constexpr int MAX_USERNAME_LEN = 32;
-
     std::string get_user_name();
 
     std::string current_wd();

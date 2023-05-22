@@ -58,11 +58,6 @@ std::string LakeShell::Cmd::Command::assemble_alias()
     return command;
 }
 
-bool LakeShell::Cmd::Command::is_non_parallel_command()
-{
-    return get_name() != "ls";
-}
-
 LakeShell::Cmd::CommandContainer::CommandContainer(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds, bool is_piped, bool is_concat)
     : m_cmds(cmds), m_is_piped(is_piped), m_is_concat(is_concat)
 {

@@ -50,7 +50,6 @@ namespace LakeShell::Cmd {
         std::vector<std::string> get_args();
         uint32_t arg_count();
         bool is_internal_command();
-        bool is_non_parallel_command();
 
     private:
         static constexpr std::string_view PWD = "pwd";

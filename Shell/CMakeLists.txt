@@ -26,9 +26,6 @@ set(SRC
         Cmd.hpp
         Cmd.cpp
 
-        Logger.cpp
-        Logger.hpp
-
         Executor.cpp
         Executor.hpp
 
@@ -40,8 +37,8 @@ set(SRC
 # For some reason, getting the username and also the current implementation of the
 # path indexing is not working in wsl, but only on mac and linux (native).
 if (EnableWslCompatibility)
-        add_compile_definitions(WSL_COMPATIBILITY_MODE)
-endif()
+    add_compile_definitions(WSL_COMPATIBILITY_MODE)
+endif ()
 
 add_executable(lsh main.cpp ${SRC})
 target_link_libraries(lsh readline)

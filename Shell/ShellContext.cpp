@@ -51,11 +51,6 @@ std::string LakeShell::ShellContext::get_username()
     return m_username;
 }
 
-std::string LakeShell::ShellContext::get_relative_working_dir()
-{
-    return std::string();
-}
-
 bool LakeShell::ShellContext::is_git_dir()
 {
     return m_working_directory->is_git_dir();
@@ -110,16 +105,4 @@ void LakeShell::ShellContext::load_shell_profile()
 ShellContext::ShellContext()
 {
     load_shell_profile();
-}
-
-std::vector<std::string> ShellContext::get_path_completions(const std::string& partial_path)
-{
-    auto wd = get_working_dir();
-    std::vector<std::string> path_completions;
-    for (auto& path : m_current_dirs) {
-        if (path.starts_with(partial_path)) {
-            path_completions.push_back(path);
-        }
-    }
-    return path_completions;
 }

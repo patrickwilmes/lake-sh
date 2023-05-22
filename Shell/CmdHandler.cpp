@@ -1,15 +1,10 @@
 #include "CmdHandler.hpp"
 #include "Executor.hpp"
-#include "Logger.hpp"
-#include "ShellContext.hpp"
 #include "Parser.hpp"
-#include "User.hpp"
-#include <cassert>
-#include <filesystem>
-#include <iostream>
-#include <string>
-#include <unistd.h>
+#include "ShellContext.hpp"
 #include <algorithm>
+#include <filesystem>
+#include <string>
 
 using namespace LakeShell;
 
@@ -66,7 +61,7 @@ void LakeShell::Cmd::CommandHandler::index_path()
     size_t pos;
     std::string token;
 
-    //TODO: this could maybe be done in parallel
+    // TODO: this could maybe be done in parallel
     while ((pos = path.find(delim)) != std::string::npos) {
         token = path.substr(0, pos);
         if (token.starts_with("/mnt")) {

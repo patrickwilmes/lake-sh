@@ -1,12 +1,10 @@
 #ifndef LC3_VM_UTILS_HPP
 #define LC3_VM_UTILS_HPP
 
-#include <filesystem>
 #include <algorithm>
+#include <filesystem>
 #include <string>
 #include <vector>
-
-inline uint16_t swap16(uint16_t x) { return (x << 8) | (x >> 8); }
 
 static inline void ltrim(std::string& s)
 {
