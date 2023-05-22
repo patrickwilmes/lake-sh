@@ -2,6 +2,8 @@
 #define LAKE_SH_SHELLCONTEXT_HPP
 
 #include "Alias.hpp"
+#include "fs/WorkingDirectory.hpp"
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -25,7 +27,7 @@ namespace LakeShell {
     private:
         static const std::string LAKE_SHELL_PROFILE;
         bool m_is_git = false;
-        std::string m_current_wd;
+        std::unique_ptr<WorkingDirectory> m_working_directory = nullptr;
         std::string m_user_home;
         std::string m_username;
         std::vector<std::string> m_current_dirs;
@@ -33,4 +35,4 @@ namespace LakeShell {
     };
 } // namespace LakeShell
 
-#endif //LAKE_SH_SHELLCONTEXT_HPP
+#endif // LAKE_SH_SHELLCONTEXT_HPP

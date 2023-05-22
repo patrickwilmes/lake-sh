@@ -2,6 +2,9 @@ set(SRC
         Parser.cpp
         Parser.hpp
 
+        fs/WorkingDirectory.cpp
+        fs/WorkingDirectory.hpp
+
         Shell.cpp
         Shell.hpp
 

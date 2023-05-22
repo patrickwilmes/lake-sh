@@ -1,8 +1,8 @@
 #include "ShellContext.hpp"
 
+#include "Parser.hpp"
 #include "User.hpp"
 #include "utils/Utils.hpp"
-#include "Parser.hpp"
 #include <filesystem>
 #include <fstream>
 #include <utility>
@@ -14,14 +14,16 @@ const std::string ShellContext::LAKE_SHELL_PROFILE = ".lakesh";
 
 void LakeShell::ShellContext::refresh()
 {
-    m_current_wd = LakeShell::User::current_wd();
+    if (m_working_directory == nullptr)
+        m_working_directory = std::make_unique<WorkingDirectory>(LakeShell::User::current_wd());
+    else
+        m_working_directory->refresh(LakeShell::User::current_wd());
     m_user_home = LakeShell::User::usr_home_dir();
     m_username = LakeShell::User::get_user_name();
 
-    m_current_dirs = get_dirs_for(m_current_wd);
+    m_current_dirs = get_dirs_for(m_working_directory->get_working_dir());
 
-    m_is_git = std::filesystem::exists(".git");
-    std::filesystem::path path = m_current_wd;
+    std::filesystem::path path = m_working_directory->get_working_dir();
     if (!m_is_git) {
         while (path != m_user_home && path != "/") {
             auto parent_git_path = path.append(".git");
@@ -36,7 +38,7 @@ void LakeShell::ShellContext::refresh()
 
 std::string LakeShell::ShellContext::get_working_dir()
 {
-    return m_current_wd;
+    return m_working_directory->get_working_dir();
 }
 
 std::string LakeShell::ShellContext::get_user_home()
@@ -56,7 +58,7 @@ std::string LakeShell::ShellContext::get_relative_working_dir()
 
 bool LakeShell::ShellContext::is_git_dir()
 {
-    return m_is_git;
+    return m_working_directory->is_git_dir();
 }
 
 void LakeShell::ShellContext::add_alias(std::string name, std::string origin)
