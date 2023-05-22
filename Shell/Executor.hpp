@@ -23,7 +23,7 @@ namespace LakeShell {
     class OwnCommandExecutor final : public Executor {
     public:
         OwnCommandExecutor(std::shared_ptr<LakeShell::Cmd::Command> cmd, std::shared_ptr<LakeShell::ShellContext> shell_context);
-        virtual std::string execute() override;
+        std::string execute() override;
     private:
         std::shared_ptr<LakeShell::ShellContext> m_shell_context;
         static constexpr std::string_view PWD = "pwd";
@@ -44,7 +44,7 @@ namespace LakeShell {
         std::string execute() override;
 
     private:
-        int spawn_command(std::shared_ptr<LakeShell::Cmd::Command> cmd, int input, bool is_first, bool is_last);
+        static int spawn_command(const std::shared_ptr<LakeShell::Cmd::Command>& cmd, int input, bool is_first, bool is_last);
 
     private:
         const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> m_cmds;

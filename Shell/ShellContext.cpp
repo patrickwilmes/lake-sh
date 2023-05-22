@@ -2,7 +2,6 @@
 
 #include "Parser.hpp"
 #include "User.hpp"
-#include "utils/Utils.hpp"
 #include <filesystem>
 #include <fstream>
 #include <utility>
@@ -10,7 +9,7 @@
 using namespace LakeShell;
 using namespace LakeShell::Parser;
 
-const std::string ShellContext::LAKE_SHELL_PROFILE = ".lakesh";
+const std::string ShellContext::LAKE_SHELL_PROFILE = ".lshrc";
 
 void LakeShell::ShellContext::refresh()
 {
@@ -20,8 +19,6 @@ void LakeShell::ShellContext::refresh()
         m_working_directory->refresh(LakeShell::User::current_wd());
     m_user_home = LakeShell::User::usr_home_dir();
     m_username = LakeShell::User::get_user_name();
-
-    m_current_dirs = get_dirs_for(m_working_directory->get_working_dir());
 
     std::filesystem::path path = m_working_directory->get_working_dir();
     if (!m_is_git) {

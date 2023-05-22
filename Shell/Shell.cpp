@@ -65,7 +65,7 @@ void Shell::set_jump_active()
     m_jump_active = 1;
 }
 
-void Shell::sigint_handler(int signo)
+void Shell::sigint_handler()
 {
     if (!m_jump_active) {
         return;
@@ -77,7 +77,7 @@ void Shell::setup_sig_handling()
 {
     struct sigaction s {
     };
-    s.sa_handler = Shell::sigint_handler;
+    s.sa_handler = reinterpret_cast<__sighandler_t>(Shell::sigint_handler);
     sigemptyset(&s.sa_mask);
     s.sa_flags = SA_RESTART;
     sigaction(SIGINT, &s, nullptr);

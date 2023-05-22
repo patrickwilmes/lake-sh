@@ -27,8 +27,7 @@ std::string LakeShell::PipedExecutor::execute()
     return data;
 }
 
-//TODO: pass cmd as const ref
-int LakeShell::PipedExecutor::spawn_command(std::shared_ptr<LakeShell::Cmd::Command> cmd, int input, bool is_first, bool is_last)
+int LakeShell::PipedExecutor::spawn_command(const std::shared_ptr<LakeShell::Cmd::Command>& cmd, int input, bool is_first, bool is_last)
 {
     int pid;
     int fd[2];
@@ -100,7 +99,7 @@ std::string LakeShell::Executor::execute()
             p = wait(&child_status);
         } while (p != pid);
     }
-    return std::string();
+    return {};
 }
 
 LakeShell::Executor::Executor(std::shared_ptr<LakeShell::Cmd::Command> cmd)

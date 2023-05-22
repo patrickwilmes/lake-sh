@@ -3,8 +3,9 @@
 
 #include <cstring>
 #include <exception>
-#include <string>
 #include <memory>
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace LakeShell::Cmd {
@@ -28,7 +29,7 @@ namespace LakeShell::Cmd {
     public:
         explicit CommandNotFoundException(std::string name)
             : std::exception()
-            , m_name(name)
+            , m_name(std::move(name))
         {
         }
         [[nodiscard]] const char* what() const noexcept override
@@ -44,7 +45,7 @@ namespace LakeShell::Cmd {
     public:
         explicit Command(std::string name);
         void add_arg(const std::string& arg);
-        void ensure_has_args(const uint32_t expected_number);
+        void ensure_has_args(uint32_t expected_number);
         std::string get_name();
         std::string assemble_alias();
         std::vector<std::string> get_args();
@@ -67,18 +68,16 @@ namespace LakeShell::Cmd {
 
     class CommandContainer final {
     public:
-    	CommandContainer() = default;
-        CommandContainer(const std::vector<std::shared_ptr<Command>> cmds, bool is_piped, bool is_concat);
-        bool is_piped();
-        bool is_concat();
-        bool is_regular();
+        CommandContainer() = default;
+        CommandContainer(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds, bool is_concat);
+        [[nodiscard]] bool is_concat() const;
         std::vector<std::shared_ptr<Command>> get_commands();
+
     private:
         std::vector<std::shared_ptr<Command>> m_cmds;
-        bool m_is_piped;
-        bool m_is_concat;
+        bool m_is_concat {};
     };
 
 }
 
-#endif //LAKE_SH_CMD_HPP
+#endif // LAKE_SH_CMD_HPP

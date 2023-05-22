@@ -27,15 +27,4 @@ static inline void trim(std::string& s)
     rtrim(s);
 }
 
-static inline std::vector<std::string> get_dirs_for(std::string& path)
-{
-    std::vector<std::string> entries;
-    for (const auto& entry : std::filesystem::directory_iterator(path)) {
-        if (entry.is_directory()) {
-            entries.push_back(entry.path().string());
-        }
-    }
-    return entries;
-}
-
 #endif // LC3_VM_UTILS_HPP

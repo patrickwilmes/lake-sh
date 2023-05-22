@@ -51,9 +51,9 @@ private:
         m_current_token = "";
     }
 
-    char peek(uint32_t step = 1)
+    char peek()
     {
-        return m_line[m_pos + step];
+        return m_line[m_pos + 1];
     }
 
 private:
@@ -64,20 +64,17 @@ private:
 };
 
 void parse_cmd(std::vector<std::string>& tokens, uint32_t& parse_pos, std::vector<std::shared_ptr<Command>>& cmds);
-void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, std::shared_ptr<Command> cmd);
+void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, const std::shared_ptr<Command>& cmd);
 
 std::shared_ptr<LakeShell::Cmd::CommandContainer> LakeShell::Parser::parse_input(std::string& input)
 {
     bool is_concat = false;
-    bool is_piped = false;
     if (input.find("&&") != std::string::npos)
         is_concat = true;
-    if (input.find("|") != std::string::npos)
-        is_piped = true;
     Tokenizer tokenizer(std::move(input));
     auto tokens = tokenizer.tokenize();
     if (tokens.empty()) {
-        return std::shared_ptr<CommandContainer>();
+        return {};
     }
     std::vector<std::shared_ptr<Command>> cmds;
     uint32_t parse_pos = 0;
@@ -86,7 +83,7 @@ std::shared_ptr<LakeShell::Cmd::CommandContainer> LakeShell::Parser::parse_input
         parse_pos++;
         parse_cmd(tokens, parse_pos, cmds);
     }
-    return std::make_shared<CommandContainer>(cmds, is_piped, is_concat);
+    return std::make_shared<CommandContainer>(cmds, is_concat);
 }
 
 void parse_cmd(std::vector<std::string>& tokens, uint32_t& parse_pos, std::vector<std::shared_ptr<Command>>& cmds)
@@ -98,7 +95,7 @@ void parse_cmd(std::vector<std::string>& tokens, uint32_t& parse_pos, std::vecto
     cmds.emplace_back(parsed_command);
 }
 
-void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, std::shared_ptr<Command> cmd)
+void parse_arg(std::vector<std::string>& tokens, uint32_t& parse_pos, const std::shared_ptr<Command>& cmd)
 {
     if (parse_pos > tokens.size() - 1 || tokens[parse_pos] == "|" || tokens[parse_pos] == "&&") {
         return;

@@ -16,7 +16,7 @@ namespace LakeShell {
     public:
         Shell();
         void run();
-        static void sigint_handler(int);
+        static void sigint_handler();
 
     private:
         static void set_jump_active();

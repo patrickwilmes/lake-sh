@@ -49,8 +49,8 @@ std::string LakeShell::Cmd::Command::assemble_alias()
 {
     std::string command;
     uint8_t c = 0;
-    for (auto& arg: m_args) {
-        if (c > 0) { // we dont want to take the first arg as it will be the command name itself
+    for (auto& arg : m_args) {
+        if (c > 0) { // we don't want to take the first arg as it will be the command name itself
             command += " " + arg;
         }
         c++;
@@ -58,27 +58,18 @@ std::string LakeShell::Cmd::Command::assemble_alias()
     return command;
 }
 
-LakeShell::Cmd::CommandContainer::CommandContainer(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds, bool is_piped, bool is_concat)
-    : m_cmds(cmds), m_is_piped(is_piped), m_is_concat(is_concat)
-{
-}
-
-bool LakeShell::Cmd::CommandContainer::is_piped()
-{
-    return m_is_piped;
-}
-
-bool LakeShell::Cmd::CommandContainer::is_concat()
+bool LakeShell::Cmd::CommandContainer::is_concat() const
 {
     return m_is_concat;
-}
-
-bool LakeShell::Cmd::CommandContainer::is_regular()
-{
-    return !is_concat() && !is_piped();
 }
 
 std::vector<std::shared_ptr<LakeShell::Cmd::Command>> LakeShell::Cmd::CommandContainer::get_commands()
 {
     return m_cmds;
+}
+
+LakeShell::Cmd::CommandContainer::CommandContainer(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds, bool is_concat)
+    : m_cmds(cmds)
+    , m_is_concat(is_concat)
+{
 }

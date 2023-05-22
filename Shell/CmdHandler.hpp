@@ -19,7 +19,7 @@ namespace LakeShell::Cmd {
         void validate_external_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds);
 
         void index_path();
-        std::vector<std::shared_ptr<LakeShell::Cmd::Command>> resolve_aliased_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds);
+        std::vector<std::shared_ptr<LakeShell::Cmd::Command>> resolve_aliased_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds);
 
     private:
         std::vector<std::string> m_available_commands;

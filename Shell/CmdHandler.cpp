@@ -14,7 +14,7 @@ void LakeShell::Cmd::CommandHandler::handle_commands(const std::shared_ptr<LakeS
     auto resolved_cmds = resolve_aliased_commands(cmd_container->get_commands());
     if (!resolved_cmds.empty()) {
         if (cmd_container->is_concat()) {
-            for (auto cmd : resolved_cmds) {
+            for (const auto& cmd : resolved_cmds) {
                 LakeShell::create_executor(cmd, m_shell_context)->execute();
             }
         } else {
@@ -22,7 +22,7 @@ void LakeShell::Cmd::CommandHandler::handle_commands(const std::shared_ptr<LakeS
         }
     } else {
         if (cmd_container->is_concat()) {
-            for (auto cmd : cmd_container->get_commands()) {
+            for (const auto& cmd : cmd_container->get_commands()) {
                 LakeShell::create_executor(cmd, m_shell_context)->execute();
             }
         } else {
@@ -75,7 +75,7 @@ void LakeShell::Cmd::CommandHandler::index_path()
     }
 }
 
-std::vector<std::shared_ptr<LakeShell::Cmd::Command>> Cmd::CommandHandler::resolve_aliased_commands(std::vector<std::shared_ptr<LakeShell::Cmd::Command>> cmds)
+std::vector<std::shared_ptr<LakeShell::Cmd::Command>> Cmd::CommandHandler::resolve_aliased_commands(const std::vector<std::shared_ptr<LakeShell::Cmd::Command>>& cmds)
 {
     std::vector<std::shared_ptr<LakeShell::Cmd::Command>> resolved_cmds;
     for (auto& cmd : cmds) {
