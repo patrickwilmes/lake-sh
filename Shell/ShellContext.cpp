@@ -1,7 +1,7 @@
 #include "ShellContext.hpp"
 
 #include "Parser.hpp"
-#include "User.hpp"
+#include "User.h"
 #include <filesystem>
 #include <fstream>
 #include <utility>
@@ -14,11 +14,11 @@ const std::string ShellContext::LAKE_SHELL_PROFILE = ".lshrc";
 void LakeShell::ShellContext::refresh()
 {
     if (m_working_directory == nullptr)
-        m_working_directory = std::make_unique<WorkingDirectory>(LakeShell::User::current_wd());
+        m_working_directory = std::make_unique<WorkingDirectory>(AK::current_wd());
     else
-        m_working_directory->refresh(LakeShell::User::current_wd());
-    m_user_home = LakeShell::User::usr_home_dir();
-    m_username = LakeShell::User::get_user_name();
+        m_working_directory->refresh(AK::current_wd());
+    m_user_home = AK::usr_home_dir();
+    m_username = AK::get_user_name();
 
     std::filesystem::path path = m_working_directory->get_working_dir();
     if (!m_is_git) {

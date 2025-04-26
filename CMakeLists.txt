@@ -11,5 +11,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # Use -DEnableWslCompatibility=ON to enable
 option(EnableWslCompatibility "EnableWslCompatibility" OFF)
 
+add_subdirectory(AK)
 add_subdirectory(Libraries)
 add_subdirectory(Shell)

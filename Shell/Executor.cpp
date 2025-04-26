@@ -1,5 +1,5 @@
 #include "Executor.hpp"
-#include "User.hpp"
+#include "User.h"
 #include <cassert>
 #include <filesystem>
 #include <iostream>
@@ -132,18 +132,18 @@ std::string LakeShell::OwnCommandExecutor::execute()
     auto args = m_cmd->get_args();
     if (cmd_name == PWD) {
         m_cmd->ensure_has_args(0);
-        std::string wd = LakeShell::User::current_wd();
+        std::string wd = AK::current_wd();
         std::cout << wd << '\n'
                   << std::flush;
         was_executed = true;
     } else if (cmd_name == CD) {
         if (args.empty()) {
-            std::string usr_home = LakeShell::User::usr_home_dir();
+            std::string usr_home = AK::usr_home_dir();
             chdir(usr_home.c_str());
         } else {
             m_cmd->ensure_has_args(1);
             auto resolve_path = [](std::string& origin_path) {
-                std::string wd = LakeShell::User::current_wd();
+                std::string wd = AK::current_wd();
                 if (origin_path == "..") {
                     std::filesystem::path opath = origin_path;
                     return opath.string();

@@ -8,9 +8,6 @@ set(SRC
         Shell.cpp
         Shell.hpp
 
-        User.cpp
-        User.hpp
-
         CmdHandler.cpp
         CmdHandler.hpp
 
@@ -41,7 +38,7 @@ if (EnableWslCompatibility)
 endif ()
 
 add_executable(lsh main.cpp ${SRC})
-target_link_libraries(lsh readline)
+target_link_libraries(lsh readline AK)
 
 add_executable(lsh_debug main.cpp ${SRC})
 target_link_libraries(lsh_debug readline)

@@ -1,9 +1,10 @@
-#include "User.hpp"
+#include "User.h"
+
 #include <climits>
 #include <pwd.h>
 #include <unistd.h>
 
-std::string LakeShell::User::get_user_name()
+std::string AK::get_user_name()
 {
 #ifndef WSL_COMPATIBILITY_MODE
     // GitHub Issue regarding WSL getlogin issue https://github.com/microsoft/WSL/issues/888
@@ -14,7 +15,7 @@ std::string LakeShell::User::get_user_name()
 #endif
 }
 
-std::string LakeShell::User::current_wd()
+std::string AK::current_wd()
 {
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) != nullptr) {
@@ -23,7 +24,7 @@ std::string LakeShell::User::current_wd()
     return "";
 }
 
-std::string LakeShell::User::usr_home_dir()
+std::string AK::usr_home_dir()
 {
     struct passwd* pw = getpwuid(getuid());
     return { pw->pw_dir };
