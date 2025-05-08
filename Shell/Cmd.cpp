@@ -1,10 +1,11 @@
 #include "Cmd.hpp"
+#include "utils/Utils.hpp"
 #include <algorithm>
 
 #include <utility>
 
 LakeShell::Cmd::Command::Command(std::string name)
-    : m_name(std::move(name))
+    : m_name(std::move(trim_copy(name)))
 {
     // correcting cd.. to cd ..
     if (m_name.starts_with("cd") && m_name.ends_with("..")) {
