@@ -8,7 +8,7 @@ namespace LakeShell {
     class Prompt {
     public:
         explicit Prompt(std::shared_ptr<ShellContext>  context);
-        std::string render_prompt();
+        std::string render_prompt() const;
     private:
         std::shared_ptr<ShellContext> m_shell_context;
     };

@@ -1,5 +1,4 @@
 #include "Shell.hpp"
-#include "../AK/Utils.hpp"
 #include "Cmd.hpp"
 #include "CmdHandler.hpp"
 #include "Parser.hpp"
@@ -8,7 +7,6 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <string>
-#include <vector>
 
 using namespace LakeShell;
 
