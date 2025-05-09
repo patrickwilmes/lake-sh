@@ -11,5 +11,20 @@ namespace LibConfig {
         [[nodiscard]] std::vector<Token> lex();
     private:
         std::string m_config_string;
+        std::vector<Token> m_tokens;
+        size_t m_pos = 0;
+
+        enum class State {
+            Default,
+            Section,
+            KeyValue
+        };
+
+        State m_state = State::Default;
+
+        void consume_section();
+        void consume_key_value();
+
+        [[nodiscard]] char peek() const;
     };
 }

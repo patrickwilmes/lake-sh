@@ -11,9 +11,6 @@ set(SRC
         CmdHandler.cpp
         CmdHandler.hpp
 
-        utils/Utils.cpp
-        utils/Utils.hpp
-
         ShellContext.cpp
         ShellContext.hpp
 
