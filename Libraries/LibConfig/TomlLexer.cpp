@@ -55,7 +55,7 @@ void LibConfig::TomlLexer::consume_key_value()
         key += m_config_string[m_pos];
         m_pos++;
     }
-    m_tokens.push_back(Token{ TokenType::Identifier, trim_copy(key)});
+    m_tokens.push_back(Token{ TokenType::Key, trim_copy(key)});
     m_tokens.push_back(Token{ TokenType::EQ, "=" });
     m_pos++;
     std::string value;
