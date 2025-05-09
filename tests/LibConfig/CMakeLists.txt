@@ -3,6 +3,7 @@ enable_testing()
 add_executable(
         libconfig_test
         TomlLexerTest.cpp
+        TomlParserTest.cpp
 )
 target_link_libraries(
         libconfig_test

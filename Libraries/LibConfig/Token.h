@@ -4,6 +4,7 @@
 namespace LibConfig {
     enum class TokenType {
         Identifier,
+        Key,
         String,
         Number,
         EQ,
