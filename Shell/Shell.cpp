@@ -17,7 +17,7 @@ sigjmp_buf Shell::m_env;
 
 Shell::Shell()
     : m_shell_context(std::make_shared<ShellContext>())
-    , m_cmd_handler(LakeShell::Cmd::CommandHandler(m_shell_context))
+    , m_cmd_handler(CommandHandler(m_shell_context))
     , m_prompt(Prompt(m_shell_context))
 {
     m_shell_context->refresh();
