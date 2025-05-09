@@ -20,7 +20,7 @@ void LakeShell::ShellContext::refresh()
         m_working_directory->refresh(AK::current_wd());
     m_user_home = AK::usr_home_dir();
     m_username = AK::get_user_name();
-    auto lake_sh_config = m_user_home.append("/.config/lake-sh/lake.toml");
+    auto lake_sh_config = m_user_home + "/.config/lake-sh/lake.toml";
     if (!std::filesystem::exists(lake_sh_config)) {
         auto cwd = m_working_directory->get_working_dir() + "/config/lake.toml";
         m_shell_config = std::make_unique<LibConfig::ShellConfig>(cwd);
@@ -78,6 +78,7 @@ std::string LakeShell::ShellContext::get_origin_of_alias(std::string& name)
 
 void LakeShell::ShellContext::load_shell_profile()
 {
+    refresh();
     auto user_home = get_user_home();
     auto profile = user_home + "/" + LAKE_SHELL_PROFILE;
 
