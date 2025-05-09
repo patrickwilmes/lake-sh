@@ -1,8 +1,8 @@
 #include "Prompt.hpp"
-#include "TextRendering.hpp" 
+#include "TextRendering.hpp"
 
-#include <utility>
 #include <regex>
+#include <utility>
 using namespace LakeShell;
 
 Prompt::Prompt(std::shared_ptr<ShellContext> context)
@@ -12,12 +12,24 @@ Prompt::Prompt(std::shared_ptr<ShellContext> context)
 
 std::string Prompt::render_prompt() const
 {
-    std::string prompt = m_shell_context->get_username();
-    auto user_home = m_shell_context->get_user_home();
-    auto wd = m_shell_context->get_working_dir();
-    prompt += " @ " + std::regex_replace(m_shell_context->get_working_dir(), std::regex(user_home), "~");
-    if (m_shell_context->is_git_dir()) {
-        prompt += spaced(red("git"));
+    auto template_string = m_shell_context->get_config("template");
+    std::unordered_map<std::string, std::string> values = {
+        { "user", m_shell_context->get_username() },
+        { "home", m_shell_context->get_user_home() },
+        { "git", m_shell_context->is_git_dir() ? "git" : "" },
+        { "git_branch", "main" },
+        { "time", "none" },
+        { "prompt_sign", ">>\n%" }
+    };
+    return replace_template_vars(template_string, values);
+}
+
+std::string Prompt::replace_template_vars(std::string templ, const std::unordered_map<std::string, std::string>& values)
+{
+    std::string result = std::move(templ);
+    for (const auto& [key, value] : values) {
+        std::string pattern = "\\{" + key + "\\}";
+        result = std::regex_replace(result, std::regex(pattern), value);
     }
-    return prompt + " >>\n% ";
+    return result;
 }

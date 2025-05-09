@@ -27,5 +27,8 @@ std::string AK::current_wd()
 std::string AK::usr_home_dir()
 {
     struct passwd* pw = getpwuid(getuid());
-    return { pw->pw_dir };
+    if (pw == nullptr) {
+        return "";
+    }
+    return  pw->pw_dir;
 }
