@@ -3,6 +3,7 @@
 #include "Cmd.hpp"
 #include "CmdHandler.hpp"
 #include "Parser.hpp"
+#include <Utils.hpp>
 #include <iostream>
 #include <readline/history.h>
 #include <readline/readline.h>
