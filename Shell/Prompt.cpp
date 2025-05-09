@@ -10,7 +10,7 @@ Prompt::Prompt(std::shared_ptr<ShellContext> context)
 {
 }
 
-std::string Prompt::render_prompt()
+std::string Prompt::render_prompt() const
 {
     std::string prompt = m_shell_context->get_username();
     auto user_home = m_shell_context->get_user_home();
