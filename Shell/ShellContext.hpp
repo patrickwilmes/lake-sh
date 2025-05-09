@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <ShellConfig.h>
 
 namespace LakeShell {
     class ShellContext final {
@@ -21,6 +22,7 @@ namespace LakeShell {
         bool alias_exists(std::string& name);
         std::string get_origin_of_alias(std::string& name);
         void load_shell_profile();
+        std::string get_config(const std::string& key) const;
 
     private:
         static const std::string LAKE_SHELL_PROFILE;
@@ -30,6 +32,7 @@ namespace LakeShell {
         std::string m_username;
         std::vector<std::string> m_current_dirs;
         AliasContainer m_alias_container;
+        std::unique_ptr<LibConfig::ShellConfig> m_shell_config = nullptr;
     };
 } // namespace LakeShell
 

@@ -6,7 +6,9 @@ set(SRC
         TomlParser.h
         TomlParser.cpp
         ConfigStore.cpp
-        ConfigStore.h)
+        ConfigStore.h
+        ShellConfig.cpp
+        ShellConfig.h)
 
 add_library(LibConfig ${SRC})
 target_include_directories(LibConfig PUBLIC .)

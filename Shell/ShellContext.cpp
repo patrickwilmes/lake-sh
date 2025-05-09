@@ -1,6 +1,7 @@
 #include "ShellContext.hpp"
 
 #include "Parser.hpp"
+#include "TomlParser.h"
 #include "User.h"
 #include <filesystem>
 #include <fstream>
@@ -19,6 +20,13 @@ void LakeShell::ShellContext::refresh()
         m_working_directory->refresh(AK::current_wd());
     m_user_home = AK::usr_home_dir();
     m_username = AK::get_user_name();
+    auto lake_sh_config = m_user_home.append("/.config/lake-sh/lake.toml");
+    if (!std::filesystem::exists(lake_sh_config)) {
+        auto cwd = m_working_directory->get_working_dir() + "/config/lake.toml";
+        m_shell_config = std::make_unique<LibConfig::ShellConfig>(cwd);
+    } else {
+        m_shell_config = std::make_unique<LibConfig::ShellConfig>(lake_sh_config);
+    }
 
     std::filesystem::path path = m_working_directory->get_working_dir();
     if (!m_is_git) {
@@ -97,6 +105,11 @@ void LakeShell::ShellContext::load_shell_profile()
             }
         }
     }
+}
+
+std::string ShellContext::get_config(const std::string& key) const
+{
+    return m_shell_config->get(key);
 }
 
 ShellContext::ShellContext()
