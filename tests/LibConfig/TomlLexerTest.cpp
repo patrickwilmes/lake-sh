@@ -3,10 +3,13 @@
 
 class TomlLexerTest : public ::testing::Test {};
 
-TEST_F(TomlLexerTest, ConfigLoadTest) {
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TomlLexerTest, ConfigValueTest) {
-    EXPECT_EQ(2 + 2, 4);
+TEST_F(TomlLexerTest, ConfigWithSectionOnly) {
+    LibConfig::TomlLexer lexer(R"(
+[Section]
+)");
+    const auto tokens = lexer.lex();
+    EXPECT_EQ(tokens.size(), 3);
+    EXPECT_EQ(tokens[0].value, "[");
+    EXPECT_EQ(tokens[1].value, "Section");
+    EXPECT_EQ(tokens[2].value, "]");
 }

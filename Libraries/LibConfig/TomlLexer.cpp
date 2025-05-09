@@ -5,64 +5,37 @@
 #include <string>
 #include <utility>
 
-LibConfig::TomlLexer::TomlLexer(std::string config_file)
-    : m_config_file(std::move(config_file))
+LibConfig::TomlLexer::TomlLexer(std::string config_string)
+    : m_config_string(std::move(config_string))
 {
 }
 
 std::vector<LibConfig::Token> LibConfig::TomlLexer::lex()
 {
-    auto toml_content = AK::IO::read_file(m_config_file);
     std::vector<Token> tokens;
-    std::string token;
-    for (char c : toml_content) {
-        token += c;
+    std::string current_token;
+    for (size_t i = 0; i < m_config_string.size(); ++i) {
+        current_token += m_config_string[i];
 
-        if (std::isalpha(c)) {
-            tokens.push_back(scan_identifier());
-        } else if (std::isdigit(c)) {
-            tokens.push_back(scan_number());
-        } else if (c == '"') {
-            tokens.push_back(scan_string());
-        } else if (c == ']') {
-            tokens.push_back(Token{TokenType::OpenBrace, "["});
-        } else if (c == '[') {
-            tokens.push_back(Token{TokenType::CloseBrace, "]"});
+        if (current_token == "\n") {
+            current_token = "";
+            continue;
+        }
+
+        if (current_token == "[") {
+            tokens.push_back(Token { TokenType::OpenBrace, current_token });
+            current_token = "";
+            continue;
+        }
+        if (current_token == "]") {
+            tokens.push_back(Token { TokenType::CloseBrace, current_token });
+            current_token = "";
+            continue;
+        }
+        if (m_config_string[i + 1] == ']') {
+            tokens.push_back(Token { TokenType::Identifier, current_token });
+            current_token = "";
         }
     }
-
-    for (const auto& token : tokens) {
-        std::cout << token.value << '\n';
-    }
-
     return tokens;
-}
-
-char LibConfig::TomlLexer::peek() const
-{
-    return m_current != m_end ? *m_current : '\0';
-}
-
-char LibConfig::TomlLexer::advance()
-{
-    return m_current != m_end ? *m_current++ : '\0';
-}
-
-LibConfig::Token LibConfig::TomlLexer::scan_string()
-{
-    std::string temp;
-    while (std::isalnum(peek()) || peek() == '_') {
-        temp += advance();
-    }
-    return Token { TokenType::String, std::move(temp) };
-}
-
-LibConfig::Token LibConfig::TomlLexer::scan_number()
-{
-    return {};
-}
-
-LibConfig::Token LibConfig::TomlLexer::scan_identifier()
-{
-    return {};
 }
