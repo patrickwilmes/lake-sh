@@ -1,2 +1,2 @@
-[Test]
-test = "string"
+[Prompt]
+template = "{user} @ {home} - {git}@{git_branch} {prompt_sign}"
